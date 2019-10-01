@@ -9,7 +9,7 @@ namespace Typer.Logic.Services
 {
     public interface IMatchService
     {
-        Task CreateMatch(long homeTeamId, long awayTeamId, long gameweekId)
+        Task CreateMatch(long homeTeamId, long awayTeamId, long gameweekId);
     }
 
     public class MatchService : IMatchService
