@@ -1,12 +1,9 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Typer.Logic.Services;
 
-namespace Typer.Logic.Commands.CreateUserCommand
+namespace Typer.Logic.Commands.User.CreateUserCommand
 {
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Unit>
     {

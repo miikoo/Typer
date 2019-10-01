@@ -1,11 +1,7 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Typer.Logic.DtoModels;
 
-namespace Typer.Logic.Queries.GetUser
+namespace Typer.Logic.Queries.User.GetUser
 {
     public class GetUserQuery : IRequest<UserDto>
     {

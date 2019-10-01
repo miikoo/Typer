@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Typer.Logic.Commands.CreateUserCommand;
-using Typer.Logic.Queries.GetUser;
+using System.Threading.Tasks;
+using Typer.Logic.Commands.User.CreateUserCommand;
+using Typer.Logic.Queries.User.GetUser;
 
 namespace Typer.Controllers
 {
