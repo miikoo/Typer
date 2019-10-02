@@ -18,10 +18,10 @@ namespace Typer.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetUser(GetUserQuery query)
-        => Ok(await _mediator.Send(query)); // NoContent ?
+            => Ok(await _mediator.Send(query)); // NoContent ?
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CreateUserCommand command)
-        => Ok(await _mediator.Send(command));
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand command)
+            => Ok(await _mediator.Send(command));
     }
 }

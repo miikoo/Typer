@@ -26,7 +26,7 @@ namespace Typer.Migrations
                 {
                     TeamId = table.Column<long>(nullable: false)
                         .Annotation("MySQL:AutoIncrement", true),
-                    Name = table.Column<string>(nullable: true)
+                    TeamName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

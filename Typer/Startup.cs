@@ -28,6 +28,8 @@ namespace Typer
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddScoped<IMediator, Mediator>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ITeamService, TeamService>();
+            services.AddTransient<IMatchService, MatchService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
