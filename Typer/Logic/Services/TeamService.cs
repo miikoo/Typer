@@ -22,7 +22,7 @@ namespace Typer.Logic.Services
         {
             await _context.AddAsync(new Team
             {
-                Name = teamName
+                TeamName = teamName
             });
             await _context.SaveChangesAsync();
         }

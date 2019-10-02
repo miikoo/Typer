@@ -99,7 +99,7 @@ namespace Typer.Migrations
                     b.Property<long>("TeamId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name");
+                    b.Property<string>("TeamName");
 
                     b.HasKey("TeamId");
 
