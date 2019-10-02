@@ -15,7 +15,7 @@ namespace Typer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CreateTeamCommand command)
-        => Ok(await _mediator.Send(command));
+        public async Task<IActionResult> CreateTeam([FromBody] CreateTeamCommand command)
+            => Ok(await _mediator.Send(command));
     }
 }

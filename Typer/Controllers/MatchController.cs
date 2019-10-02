@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Http;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using Typer.Logic.Commands.CreateMatchCommand;
+using Typer.Logic.Commands.UpdateMatchResultCommand;
 
 namespace Typer.Controllers
 {
@@ -18,7 +15,11 @@ namespace Typer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CreateMatchCommand command)
-        => Ok(await _mediator.Send(command));
+        public async Task<IActionResult> CreateMatch([FromBody] CreateMatchCommand command)
+            => Ok(await _mediator.Send(command));
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateMatchResult([FromBody] UpdateMatchResultCommand command)
+            => Ok(await _mediator.Send(command));
     }
 }
