@@ -6,8 +6,6 @@ using Typer.Logic.Commands.UpdateMatchResultCommand;
 
 namespace Typer.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class MatchController : BaseTyperController
     {
         public MatchController(IMediator _mediator) : base(_mediator)

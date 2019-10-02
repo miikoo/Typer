@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Typer.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     [AllowAnonymous] // todo
     public class BaseTyperController : ControllerBase
     {

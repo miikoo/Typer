@@ -5,8 +5,6 @@ using Typer.Logic.Commands.CreateTeamCommand;
 
 namespace Typer.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class TeamController : BaseTyperController
     {
         public TeamController(IMediator _mediator) : base(_mediator)

@@ -30,6 +30,7 @@ namespace Typer
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ITeamService, TeamService>();
             services.AddTransient<IMatchService, MatchService>();
+            services.AddTransient<IMatchPredictionService, MatchPredictionService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

@@ -7,9 +7,6 @@ using Typer.Logic.Queries.User.GetUser;
 
 namespace Typer.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [AllowAnonymous]
     public class UserController : BaseTyperController
     {
         public UserController(IMediator _mediator) : base(_mediator)

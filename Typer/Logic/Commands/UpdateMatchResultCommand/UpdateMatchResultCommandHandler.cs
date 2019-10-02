@@ -1,6 +1,6 @@
-﻿using System.Threading;
+﻿using MediatR;
+using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Typer.Logic.Services;
 
 namespace Typer.Logic.Commands.UpdateMatchResultCommand
