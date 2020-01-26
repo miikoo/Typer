@@ -111,6 +111,10 @@ namespace Typer.Migrations
                     b.Property<long>("UserId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("ASd");
+
+                    b.Property<int>("Age");
+
                     b.Property<string>("Email");
 
                     b.Property<string>("Password");

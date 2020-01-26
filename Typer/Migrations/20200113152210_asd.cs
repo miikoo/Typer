@@ -2,7 +2,7 @@
 
 namespace Typer.Migrations
 {
-    public partial class init : Migration
+    public partial class asd : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -41,7 +41,8 @@ namespace Typer.Migrations
                         .Annotation("MySQL:AutoIncrement", true),
                     Username = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
-                    Password = table.Column<string>(nullable: true)
+                    Password = table.Column<string>(nullable: true),
+                    Age = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

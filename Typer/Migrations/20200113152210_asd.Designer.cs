@@ -9,8 +9,8 @@ using Typer.Database;
 namespace Typer.Migrations
 {
     [DbContext(typeof(TyperContext))]
-    [Migration("20191002200137_init")]
-    partial class init
+    [Migration("20200113152210_asd")]
+    partial class asd
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -112,6 +112,8 @@ namespace Typer.Migrations
                 {
                     b.Property<long>("UserId")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Age");
 
                     b.Property<string>("Email");
 

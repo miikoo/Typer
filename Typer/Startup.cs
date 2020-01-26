@@ -23,8 +23,10 @@ namespace Typer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
             services.AddDbContext<TyperContext>(options =>
-            options.UseMySQL(Configuration.GetConnectionString("TyperConnectionString")));
+            options.UseMySQL(Configuration.GetConnectionString("TyperConnectionString"))); // workbench
+
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddScoped<IMediator, Mediator>();
             services.AddTransient<IUserService, UserService>();

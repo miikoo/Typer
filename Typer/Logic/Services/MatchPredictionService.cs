@@ -19,12 +19,15 @@ namespace Typer.Logic.Services
         }
 
         public async Task CreateMatchPrediction(long userId, long matchId, int homeTeamGoals, int awayTeamGoals)
-            => await _context.MatchPredictions.AddAsync(new MatchPrediction
+        {
+            await _context.MatchPredictions.AddAsync(new MatchPrediction
             {
                 UserId = userId,
                 MatchId = matchId,
                 AwayTeamGoalPrediction = awayTeamGoals,
                 HomeTeamGoalPrediction = homeTeamGoals
             });
+            await _context.SaveChangesAsync();
+        }
     }
 }
