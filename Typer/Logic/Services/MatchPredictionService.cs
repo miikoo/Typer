@@ -1,8 +1,6 @@
 using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Typer.Database;
+using Typer.Database.Entities;
 
 namespace Typer.Logic.Services
 {

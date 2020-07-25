@@ -14,7 +14,7 @@ namespace Typer.Logic.Commands.CreateMatchPredictionCommand
 
         public CreateMatchPredictionCommandHandler(IMatchPredictionService matchPredictionService)
         {
-            _matchPredictionService = matchPredictionService
+            _matchPredictionService = matchPredictionService;
         }
 
         public async Task<Unit> Handle(CreateMatchPredictionCommand request, CancellationToken cancellationToken)
