@@ -22,7 +22,7 @@ namespace Typer.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetUser(GetUserQuery query)
-            => Ok(await _mediator.Send(query)); // NoContent ?
+            => Ok(await _mediator.Send(query));
 
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand command)

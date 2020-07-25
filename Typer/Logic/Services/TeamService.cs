@@ -6,7 +6,7 @@ namespace Typer.Logic.Services
 {
     public interface ITeamService
     {
-        Task CreateMatch(string teamName);
+        Task CreateMatch(string teamName); // todo
     }
 
     public class TeamService : ITeamService
