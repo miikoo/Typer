@@ -1,17 +1,20 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Typer.Logic.Services;
 
 namespace Typer.Logic.Commands.CreateMatchPredictionCommand
 {
-    public class CreateMatchPredictionHandler : IRequestHandler<CreateMatchPredictionCommand, Unit>
+    public class CreateMatchPredictionCommandHandler : IRequestHandler<CreateMatchPredictionCommand, Unit>
     {
         private readonly IMatchPredictionService _matchPredictionService;
 
-        public CreateMatchPredictionHandler(IMatchPredictionService matchPredictionService)
+        public CreateMatchPredictionCommandHandler(IMatchPredictionService matchPredictionService)
         {
-            _matchPredictionService = matchPredictionService;
+            _matchPredictionService = matchPredictionService
         }
 
         public async Task<Unit> Handle(CreateMatchPredictionCommand request, CancellationToken cancellationToken)
