@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Logic.Services;
 
-namespace Typer.Logic.Commands.CreateMatchCommand
+namespace Typer.Logic.Commands.CreateMatch
 {
     public class CreateMatchCommandHandler : IRequestHandler<CreateMatchCommand, Unit>
     {

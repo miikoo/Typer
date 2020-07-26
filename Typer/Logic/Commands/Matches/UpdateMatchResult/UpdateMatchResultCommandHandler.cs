@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Logic.Services;
 
-namespace Typer.Logic.Commands.UpdateMatchResultCommand
+namespace Typer.Logic.Commands.UpdateMatchResult
 {
     public class UpdateMatchResultCommandHandler : IRequestHandler<UpdateMatchResultCommand, Unit>
     {

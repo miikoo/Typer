@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Typer.Logic.Commands.CreateMatchCommand
+namespace Typer.Logic.Commands.CreateMatch
 {
     public class CreateMatchCommand : IRequest<Unit>
     {

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Typer.Logic.Commands.CreateTeamCommand
+namespace Typer.Logic.Commands.CreateTeam
 {
     public class CreateTeamCommand : IRequest<Unit>
     {
