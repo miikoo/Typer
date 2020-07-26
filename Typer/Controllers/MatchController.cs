@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Typer.Logic.Commands.CreateMatchCommand;
 using Typer.Logic.Commands.UpdateMatchResultCommand;
+using Typer.Logic.Queries.Matches.GetMatchesByGameweekId;
 
 namespace Typer.Controllers
 {
@@ -19,5 +20,9 @@ namespace Typer.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateMatchResult([FromBody] UpdateMatchResultCommand command)
             => Ok(await _mediator.Send(command));
+
+        [HttpGet]
+        public async Task<IActionResult> GetMatchesByGameweekId([FromQuery] GetMatchesByGameweekIdQuery query)
+            => Ok(await _mediator.Send(query));
     }
 }

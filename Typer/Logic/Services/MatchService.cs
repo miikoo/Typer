@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Typer.Database;
 using Typer.Database.Entities;
@@ -9,6 +11,7 @@ namespace Typer.Logic.Services
     {
         Task CreateMatch(long homeTeamId, long awayTeamId, long gameweekId);
         Task UpdateMatchResult(long matchId, int homeTeamGoals, int awayTeamGoals);
+        Task<List<Match>> GetMatchesByGameweekId(long gameweekId);
     }
 
     public class MatchService : IMatchService
@@ -31,6 +34,7 @@ namespace Typer.Logic.Services
             await _context.SaveChangesAsync();
         }
 
+
         public async Task UpdateMatchResult(long matchId, int homeTeamGoals, int awayTeamGoals)
         {
             var match = await _context.Matches.FirstAsync(x => x.MatchId == matchId);
@@ -38,5 +42,8 @@ namespace Typer.Logic.Services
             match.AwayTeamGoals = awayTeamGoals;
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<Match>> GetMatchesByGameweekId(long gameweekId)
+            => await _context.Matches.Where(x => x.GameweekId == gameweekId).ToListAsync();
     }
 }
