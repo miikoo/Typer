@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Logic.Services;
 
-namespace Typer.Logic.Commands.User.CreateUserCommand
+namespace Typer.Logic.Commands.User.CreateUser
 {
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Unit>
     {

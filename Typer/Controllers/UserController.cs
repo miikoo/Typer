@@ -1,8 +1,7 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Typer.Logic.Commands.User.CreateUserCommand;
+using Typer.Logic.Commands.User.CreateUser;
 using Typer.Logic.Queries.User.GetUser;
 
 namespace Typer.Controllers

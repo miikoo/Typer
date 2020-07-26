@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Typer.Logic.Commands.CreateMatchCommand;
-using Typer.Logic.Commands.UpdateMatchResultCommand;
+using Typer.Logic.Commands.CreateMatch;
+using Typer.Logic.Commands.UpdateMatchResult;
 using Typer.Logic.Queries.Matches.GetMatchesByGameweekId;
 
 namespace Typer.Controllers

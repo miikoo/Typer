@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Typer.Logic.Commands.CreateTeamCommand;
+using Typer.Logic.Commands.CreateTeam;
 
 namespace Typer.Controllers
 {

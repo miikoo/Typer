@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Typer.Logic.Commands.User.CreateUserCommand
+namespace Typer.Logic.Commands.User.CreateUser
 {
     public class CreateUserCommand : IRequest<Unit>
     {
