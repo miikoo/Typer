@@ -1,10 +1,12 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Typer.Logic.Commands.Season.CreateSeason;
+using Typer.Logic.Queries.Seasons.GetSeasons;
 
 namespace Typer.Controllers
 {
@@ -18,5 +20,9 @@ namespace Typer.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSeason(CreateSeasonCommand command)
             => Ok(await _mediator.Send(command));
+
+        [HttpGet]
+        public async Task<IActionResult> GetSeasons(GetSeasonsQuery query)
+            => Ok(await _mediator.Send(query));
     }
 }
