@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,13 @@ namespace Typer
             services.AddTransient<IMatchPredictionService, MatchPredictionService>();
             services.AddTransient<IGameweekService, GameweekService>();
             services.AddTransient<ISeasonService, SeasonService>();
+            services.AddTransient<IJwtGenerator, JwtGenerator>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
+                {
+                    x.SaveToken = true;
+                });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -53,6 +61,7 @@ namespace Typer
                 .AllowAnyHeader());
 
             app.UseMvc();
+            app.UseAuthentication();
         }
     }
 }

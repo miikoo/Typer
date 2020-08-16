@@ -6,17 +6,17 @@
         {
 
         }
-        public UserDto(long userId, string username, string email, string password)
+        public UserDto(string userId, string username, string email, string token=null)
         {
             UserId = userId;
             Username = username;
             Email = email;
-            Password = password;
+            Token = token;
         }
 
-        public long UserId { get; set; }
+        public string UserId { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
+        public string Token { get; set; }
     }
 }

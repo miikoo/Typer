@@ -9,7 +9,7 @@ namespace Typer.Logic.Services
     public interface IUserService
     {
         Task<UserDto> GetUser(string username);
-        Task CreateUser(string username, string email, string password);
+        Task<UserDto> CreateUser(string username, string email, string password);
     }
 
     public class UserService : IUserService
@@ -20,21 +20,23 @@ namespace Typer.Logic.Services
             _context = context;
         }
 
-        public async Task CreateUser(string username, string email, string password)
+        public async Task<UserDto> CreateUser(string username, string email, string password)
         {
-            await _context.Users.AddAsync(new User
+            var user = new User
             {
                 Email = email,
                 Password = password,
                 Username = username
-            });
+            };
+            await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
+            return new UserDto(user.UserId, username, email);
         }
 
         public async Task<UserDto> GetUser(string username)
         {
             var user = await _context.Users.FirstAsync(x => x.Username == username);
-            return new UserDto(user.UserId, user.Username, user.Email, user.Password);
+            return new UserDto(user.UserId, user.Username, user.Email);
         }
     }
 }

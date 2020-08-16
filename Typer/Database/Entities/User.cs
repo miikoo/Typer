@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Typer.Database.Entities
 {
@@ -9,7 +10,8 @@ namespace Typer.Database.Entities
             MatchPredictions = new HashSet<MatchPrediction>();
         }
 
-        public long UserId { get; set; }
+        public Guid _UserId { get; set; }
+        public string UserId => _UserId.ToString();
         public string Username { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
