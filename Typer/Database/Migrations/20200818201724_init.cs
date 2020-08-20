@@ -37,11 +37,11 @@ namespace Typer.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<long>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                    UserId = table.Column<string>(nullable: false),
                     Username = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
-                    Password = table.Column<string>(nullable: true)
+                    Password = table.Column<string>(nullable: true),
+                    Role = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,7 +111,7 @@ namespace Typer.Migrations
                         .Annotation("MySQL:AutoIncrement", true),
                     HomeTeamGoalPrediction = table.Column<int>(nullable: false),
                     AwayTeamGoalPrediction = table.Column<int>(nullable: false),
-                    UserId = table.Column<long>(nullable: false),
+                    UserId = table.Column<string>(nullable: true),
                     MatchId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
@@ -128,7 +128,7 @@ namespace Typer.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

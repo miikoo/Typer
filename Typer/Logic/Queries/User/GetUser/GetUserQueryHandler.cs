@@ -15,6 +15,6 @@ namespace Typer.Logic.Queries.User.GetUser
         }
 
         public Task<UserDto> Handle(GetUserQuery request, CancellationToken cancellationToken)
-        => _userService.GetUser(request.Username);
+            => _userService.GetUser(request.Username);
     }
 }

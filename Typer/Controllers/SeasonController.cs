@@ -17,12 +17,13 @@ namespace Typer.Controllers
 
         }
 
+        [Authorize(Roles ="Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateSeason(CreateSeasonCommand command)
             => Ok(await _mediator.Send(command));
 
         [HttpGet]
-        public async Task<IActionResult> GetSeasons(GetSeasonsQuery query)
+        public async Task<IActionResult> GetSeasons([FromQuery]GetSeasonsQuery query)
             => Ok(await _mediator.Send(query));
     }
 }

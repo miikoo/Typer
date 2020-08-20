@@ -6,7 +6,7 @@ namespace Typer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous] // todo
+    [Authorize]
     public class BaseTyperController : ControllerBase
     {
         protected readonly IMediator _mediator;

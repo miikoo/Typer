@@ -9,7 +9,7 @@ using Typer.Database;
 namespace Typer.Migrations
 {
     [DbContext(typeof(TyperContext))]
-    [Migration("20191002200137_init")]
+    [Migration("20200818201724_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,7 +71,7 @@ namespace Typer.Migrations
 
                     b.Property<long>("MatchId");
 
-                    b.Property<long>("UserId");
+                    b.Property<string>("UserId");
 
                     b.HasKey("MatchPredictionId");
 
@@ -110,12 +110,14 @@ namespace Typer.Migrations
 
             modelBuilder.Entity("Typer.Database.Entities.User", b =>
                 {
-                    b.Property<long>("UserId")
+                    b.Property<string>("UserId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Email");
 
                     b.Property<string>("Password");
+
+                    b.Property<int>("Role");
 
                     b.Property<string>("Username");
 
@@ -159,8 +161,7 @@ namespace Typer.Migrations
 
                     b.HasOne("Typer.Database.Entities.User", "User")
                         .WithMany("MatchPredictions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

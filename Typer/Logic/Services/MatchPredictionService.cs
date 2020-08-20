@@ -6,7 +6,7 @@ namespace Typer.Logic.Services
 {
     public interface IMatchPredictionService
     {
-        Task CreateMatchPrediction(long userId, long matchId, int homeTeamGoals, int awayTeamGoals);
+        Task CreateMatchPrediction(string userId, long matchId, int homeTeamGoals, int awayTeamGoals);
     }
 
     public class MatchPredictionService : IMatchPredictionService
@@ -18,7 +18,7 @@ namespace Typer.Logic.Services
             _context = context;
         }
 
-        public async Task CreateMatchPrediction(long userId, long matchId, int homeTeamGoals, int awayTeamGoals)
+        public async Task CreateMatchPrediction(string userId, long matchId, int homeTeamGoals, int awayTeamGoals)
             => await _context.MatchPredictions.AddAsync(new MatchPrediction
             {
                 UserId = userId,

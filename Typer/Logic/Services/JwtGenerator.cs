@@ -7,34 +7,37 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using static Typer.Database.Entities.User;
 
 namespace Typer.Logic.Services
 {
     public interface IJwtGenerator
     {
-        string Generate(string userId);
+        string Generate(string userId, Roles role);
     }
 
     public class JwtGenerator : IJwtGenerator
     {
-        private readonly string _secret;
+        private readonly IConfiguration _config;
 
         public JwtGenerator(IConfiguration config)
         {
-            _secret = config.GetSection("AppSettings").GetSection("Secret").Value;
+            _config = config;
         }
 
-        public string Generate(string userId)
+        public string Generate(string userId, Roles role)
         {
+            var secret = _config.GetSection("AppSettings").GetSection("Secret").Value;
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_secret);
+            var key = Encoding.ASCII.GetBytes(secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, userId)
+                    new Claim(ClaimTypes.Name, userId),
+                    new Claim(ClaimTypes.Role, role.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddDays(3),
+                Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

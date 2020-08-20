@@ -8,14 +8,21 @@ namespace Typer.Database.Entities
         public User()
         {
             MatchPredictions = new HashSet<MatchPrediction>();
+            UserId = Guid.NewGuid().ToString();
         }
 
-        public Guid _UserId { get; set; }
-        public string UserId => _UserId.ToString();
+        public string UserId { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+        public Roles Role { get; set; }
 
         public virtual ICollection<MatchPrediction> MatchPredictions { get; set; }
+
+        public enum Roles
+        {
+            Admin,
+            User
+        }
     }
 }

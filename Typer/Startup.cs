@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
+using System.Text;
 using Typer.Database;
 using Typer.Logic.Services;
 
@@ -23,7 +25,7 @@ namespace Typer
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(x => x.EnableEndpointRouting = false);
             services.AddDbContext<TyperContext>(options =>
             options.UseMySQL(Configuration.GetConnectionString("TyperConnectionString")));
             services.AddMediatR(Assembly.GetExecutingAssembly());
@@ -36,10 +38,20 @@ namespace Typer
             services.AddTransient<ISeasonService, SeasonService>();
             services.AddTransient<IJwtGenerator, JwtGenerator>();
 
+            var key = Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings").GetSection("Secret").Value);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
                 {
+                    x.RequireHttpsMetadata = false;
                     x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
                 });
         }
 
@@ -59,9 +71,8 @@ namespace Typer
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
-
-            app.UseMvc();
             app.UseAuthentication();
+            app.UseMvc();
         }
     }
 }
