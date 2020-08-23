@@ -19,7 +19,7 @@ namespace Typer.Logic.Commands.Gameweek.CreateGameweek
 
         public async Task<Unit> Handle(CreateGameweekCommand request, CancellationToken cancellationToken)
         {
-            await _gameweekService.CreateGameweek(request.SeasonId);
+            await _gameweekService.CreateGameweek(request.SeasonId, request.GameweekNumber);
             return Unit.Value;
         }
     }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Typer.Logic.Commands.Season.CreateSeason;
+using Typer.Logic.Commands.Season.EditSeason;
 using Typer.Logic.Queries.Seasons.GetSeasons;
 
 namespace Typer.Controllers
@@ -25,5 +26,11 @@ namespace Typer.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSeasons([FromQuery]GetSeasonsQuery query)
             => Ok(await _mediator.Send(query));
+
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
+        [HttpPut]
+        public async Task<IActionResult> EditSeason([FromBody] EditSeasonCommand command)
+            => Ok(await _mediator.Send(command));
     }
 }

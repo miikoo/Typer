@@ -13,6 +13,7 @@ namespace Typer.Logic.Services
     {
         Task CreateSeason(int startYear, int endYear);
         Task<List<SeasonDto>> GetSeasons();
+        Task EditSeason(int startYear, int endYear, long seasonId);
     }
 
     public class SeasonService : ISeasonService
@@ -34,11 +35,20 @@ namespace Typer.Logic.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task EditSeason(int startYear, int endYear, long seasonId)
+        {
+            var season = await _context.Seasons.FirstAsync(x => x.SeasonId == seasonId);
+            season.StartYear = startYear;
+            season.EndYear = endYear;
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<List<SeasonDto>> GetSeasons()
             =>  await _context.Seasons.Select( x => new SeasonDto
             {
                 EndYear = x.EndYear,
-                StartYear = x.StartYear
+                StartYear = x.StartYear,
+                SeasonId = x.SeasonId
             }).ToListAsync();
     }
 }
