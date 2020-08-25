@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Typer.Logic.Commands.Gameweek.CreateGameweek;
+using Typer.Logic.Commands.Gameweek.EditGameweek;
 using Typer.Logic.Queries.Gameweeks.GetGameweeksBySeasonId;
 
 namespace Typer.Controllers
@@ -32,5 +33,11 @@ namespace Typer.Controllers
                 SeasonId = id
             }));
         }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        public async Task<IActionResult> EditGameweek([FromBody] EditGameweekCommand command)
+            => Ok(await _mediator.Send(command));
     }
 }

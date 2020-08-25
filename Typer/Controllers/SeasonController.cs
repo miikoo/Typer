@@ -27,8 +27,7 @@ namespace Typer.Controllers
         public async Task<IActionResult> GetSeasons([FromQuery]GetSeasonsQuery query)
             => Ok(await _mediator.Send(query));
 
-        //[Authorize(Roles = "Admin")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> EditSeason([FromBody] EditSeasonCommand command)
             => Ok(await _mediator.Send(command));

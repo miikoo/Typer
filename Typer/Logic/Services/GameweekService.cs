@@ -13,6 +13,7 @@ namespace Typer.Logic.Services
     {
         Task CreateGameweek(long seasonId, int gameweekNumber);
         Task<List<GameweekDto>> GetGameweeksBySeasonId(long seasonId);
+        Task EditGameweek(long gameweekId, int gameweekNumber);
     }
 
     public class GameweekService : IGameweekService
@@ -32,6 +33,13 @@ namespace Typer.Logic.Services
                 GameweekNumber = gameweekNumber,
                 SeasonId = seasonId
             });
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task EditGameweek(long gameweekId, int gameweekNumber)
+        {
+            var gameweek = await _context.Gameweeks.FirstAsync(x => x.GameweekId == gameweekId);
+            gameweek.GameweekNumber = gameweekNumber;
             await _context.SaveChangesAsync();
         }
 
