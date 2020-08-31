@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Typer.Logic.Commands.Gameweek.CreateGameweek;
+using Typer.Logic.Commands.Gameweek.DeleteGameweek;
 using Typer.Logic.Commands.Gameweek.EditGameweek;
 using Typer.Logic.Queries.Gameweeks.GetGameweeksBySeasonId;
 
@@ -39,5 +40,12 @@ namespace Typer.Controllers
         [HttpPut]
         public async Task<IActionResult> EditGameweek([FromBody] EditGameweekCommand command)
             => Ok(await _mediator.Send(command));
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteGamewee([FromRoute] int id)
+            => Ok(await _mediator.Send(new DeleteGameweekCommand
+            {
+                GameweekId = id
+            }));
     }
 }

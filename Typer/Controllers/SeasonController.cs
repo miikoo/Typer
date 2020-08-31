@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Typer.Logic.Commands.Season.CreateSeason;
+using Typer.Logic.Commands.Season.DeleteSeason;
 using Typer.Logic.Commands.Season.EditSeason;
 using Typer.Logic.Queries.Seasons.GetSeasons;
 
@@ -31,5 +32,13 @@ namespace Typer.Controllers
         [HttpPut]
         public async Task<IActionResult> EditSeason([FromBody] EditSeasonCommand command)
             => Ok(await _mediator.Send(command));
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSeason([FromRoute] int id)
+            => Ok(await _mediator.Send(new DeleteSeasonCommand
+            {
+                seasonId = id
+            }));
     }
 }

@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Typer.Logic.DtoModels;
 using Typer.Logic.Services;
 
 namespace Typer.Logic.Commands.Gameweek.EditGameweek
 {
-    public class EditGameweekCommandHandler : IRequestHandler<EditGameweekCommand, Unit>
+    public class EditGameweekCommandHandler : IRequestHandler<EditGameweekCommand, GameweekDto>
     {
         private readonly IGameweekService _gameweekService;
 
@@ -17,10 +18,9 @@ namespace Typer.Logic.Commands.Gameweek.EditGameweek
             _gameweekService = gameweekService;
         }
 
-        public async Task<Unit> Handle(EditGameweekCommand request, CancellationToken cancellationToken)
+        public async Task<GameweekDto> Handle(EditGameweekCommand request, CancellationToken cancellationToken)
         {
-            await _gameweekService.EditGameweek(request.gameweekId, request.gameweekNumber);
-            return Unit.Value;
+            return await _gameweekService.EditGameweek(request.gameweekId, request.gameweekNumber);
         }
     }
 }

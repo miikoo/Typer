@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Typer.Logic.DtoModels;
 using Typer.Logic.Services;
 
 namespace Typer.Logic.Commands.Season.CreateSeason
 {
-    public class CreateSeasonCommandHandler : IRequestHandler<CreateSeasonCommand, Unit>
+    public class CreateSeasonCommandHandler : IRequestHandler<CreateSeasonCommand, SeasonDto>
     {
         private readonly ISeasonService _seasonService;
 
@@ -17,10 +18,9 @@ namespace Typer.Logic.Commands.Season.CreateSeason
             _seasonService = seasonService;
         }
 
-        public async Task<Unit> Handle(CreateSeasonCommand request, CancellationToken cancellationToken)
+        public async Task<SeasonDto> Handle(CreateSeasonCommand request, CancellationToken cancellationToken)
         {
-            await _seasonService.CreateSeason(request.startYear, request.endYear);
-            return Unit.Value;
+            return await _seasonService.CreateSeason(request.startYear, request.endYear);
         }
     }
 }

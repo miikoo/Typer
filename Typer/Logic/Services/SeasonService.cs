@@ -11,9 +11,10 @@ namespace Typer.Logic.Services
 {
     public interface ISeasonService
     {
-        Task CreateSeason(int startYear, int endYear);
+        Task<SeasonDto> CreateSeason(int startYear, int endYear);
         Task<List<SeasonDto>> GetSeasons();
-        Task EditSeason(int startYear, int endYear, long seasonId);
+        Task<SeasonDto> EditSeason(int startYear, int endYear, long seasonId);
+        Task DeleteSeason(long seasonId);
     }
 
     public class SeasonService : ISeasonService
@@ -25,22 +26,42 @@ namespace Typer.Logic.Services
             _context = context;
         }
 
-        public async Task CreateSeason(int startYear, int endYear)
+        public async Task<SeasonDto> CreateSeason(int startYear, int endYear)
         {
-            await _context.Seasons.AddAsync(new Season
+            var season = new Season
             {
                 StartYear = startYear,
                 EndYear = endYear
-            });
+            };
+            await _context.Seasons.AddAsync(season);
+            await _context.SaveChangesAsync();
+            return new SeasonDto
+            {
+                SeasonId = season.SeasonId,
+                StartYear = season.StartYear,
+                EndYear = season.EndYear
+            };
+        }
+
+        public async Task DeleteSeason(long seasonId)
+        {
+            var season = await _context.Seasons.FirstAsync(x => x.SeasonId == seasonId);
+            _context.Remove(season);
             await _context.SaveChangesAsync();
         }
 
-        public async Task EditSeason(int startYear, int endYear, long seasonId)
+        public async Task<SeasonDto> EditSeason(int startYear, int endYear, long seasonId)
         {
             var season = await _context.Seasons.FirstAsync(x => x.SeasonId == seasonId);
             season.StartYear = startYear;
             season.EndYear = endYear;
             await _context.SaveChangesAsync();
+            return new SeasonDto
+            {
+                StartYear = season.StartYear,
+                EndYear = season.EndYear,
+                SeasonId = season.SeasonId
+            };
         }
 
         public async Task<List<SeasonDto>> GetSeasons()
