@@ -21,8 +21,11 @@ namespace Typer.Controllers
         public async Task<IActionResult> UpdateMatchResult([FromBody] UpdateMatchResultCommand command)
             => Ok(await _mediator.Send(command));
 
-        [HttpGet]
-        public async Task<IActionResult> GetMatchesByGameweekId([FromQuery] GetMatchesByGameweekIdQuery query)
-            => Ok(await _mediator.Send(query));
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetMatchesByGameweekId([FromRoute] int id)
+            => Ok(await _mediator.Send(new GetMatchesByGameweekIdQuery
+            {
+                GameweekId = id
+            }));
     }
 }

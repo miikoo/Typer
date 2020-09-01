@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using Typer.Logic.DtoModels;
 using Typer.Logic.Services;
 
 namespace Typer.Logic.Commands.CreateTeam
 {
-    public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, Unit>
+    public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, TeamDto>
     {
         private readonly ITeamService _teamService;
 
@@ -14,10 +15,7 @@ namespace Typer.Logic.Commands.CreateTeam
             _teamService = teamService;
         }
 
-        public async Task<Unit> Handle(CreateTeamCommand request, CancellationToken cancellationToken)
-        {
-            await _teamService.CreateMatch(request.TeamName);
-            return Unit.Value;
-        }
+        public async Task<TeamDto> Handle(CreateTeamCommand request, CancellationToken cancellationToken)
+            => await _teamService.CreateTeam(request.TeamName);
     }
 }
