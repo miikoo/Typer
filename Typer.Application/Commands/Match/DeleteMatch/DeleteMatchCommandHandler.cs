@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Domain.Interfaces;
 
-namespace Typer.API.Commands.Match.DeleteMatch
+namespace Typer.Application.Commands.Match.DeleteMatch
 {
     public class DeleteMatchCommandHandler : IRequestHandler<DeleteMatchCommand, Unit>
     {

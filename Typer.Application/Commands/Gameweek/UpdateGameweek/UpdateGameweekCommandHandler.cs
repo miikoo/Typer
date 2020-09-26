@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Domain.Interfaces;
 
-namespace Typer.API.Commands.Gameweek.UpdateGameweek
+namespace Typer.Application.Commands.Gameweek.UpdateGameweek
 {
     public class UpdateGameweekCommandHandler : IRequestHandler<UpdateGameweekCommand, Unit>
     {

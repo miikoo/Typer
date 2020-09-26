@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Domain.Interfaces;
 
-namespace Typer.API.Commands.Team.CreateTeam
+namespace Typer.Application.Commands.Team.CreateTeam
 {
     public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, long>
     {

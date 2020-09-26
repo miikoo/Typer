@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Domain.Interfaces;
 
-namespace Typer.API.Commands.Gameweek.DeleteGameweek
+namespace Typer.Application.Commands.Gameweek.DeleteGameweek
 {
     public class DeleteGameweekCommandHandler : IRequestHandler<DeleteGameweekCommand, Unit>
     {

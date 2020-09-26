@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Domain.Interfaces;
 
-namespace Typer.API.Commands.MatchPrediction.CreateMatchPrediction
+namespace Typer.Application.Commands.MatchPrediction.CreateMatchPrediction
 {
     public class CreateMatchPredictionCommandHandler : IRequestHandler<CreateMatchPredictionCommand, long>
     {

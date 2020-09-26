@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Typer.API.Commands.Match.CreateMatch
+namespace Typer.Application.Commands.Match.CreateMatch
 {
     public class CreateMatchCommand : IRequest<long>
     {

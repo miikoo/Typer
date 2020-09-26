@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Typer.API.Commands.Season.CreateSeason
+namespace Typer.Application.Commands.Season.CreateSeason
 {
     public class CreateSeasonCommand : IRequest<long>
     {

@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Domain.Interfaces;
 
-namespace Typer.API.Commands.Team.DeleteTeam
+namespace Typer.Application.Commands.Team.DeleteTeam
 {
     public class DeleteTeamCommandHandler : IRequestHandler<DeleteTeamCommand, Unit>
     {

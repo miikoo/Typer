@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Domain.Interfaces;
 
-namespace Typer.API.Commands.Team.UpdateTeam
+namespace Typer.Application.Commands.Team.UpdateTeam
 {
     public class UpdateTeamCommandHandler : IRequestHandler<UpdateTeamCommand, Unit>
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Typer.API.Commands.Season.UpdateSeason
+namespace Typer.Application.Commands.Season.UpdateSeason
 {
     public class UpdateSeasonCommand : IRequest<Unit>
     {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Typer.API.Commands.Season.CreateSeason;
+using Typer.Application.Commands.Season.CreateSeason;
 
 namespace Typer.API.Controllers
 {

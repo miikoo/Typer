@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Typer.API.Commands.Team.UpdateTeam
+namespace Typer.Application.Commands.Team.UpdateTeam
 {
     public class UpdateTeamCommand : IRequest<Unit>
     {

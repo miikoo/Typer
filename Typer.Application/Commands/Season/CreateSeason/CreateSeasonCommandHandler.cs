@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Domain.Interfaces;
 
-namespace Typer.API.Commands.Season.CreateSeason
+namespace Typer.Application.Commands.Season.CreateSeason
 {
     public class CreateSeasonCommandHandler : IRequestHandler<CreateSeasonCommand, long>
     {

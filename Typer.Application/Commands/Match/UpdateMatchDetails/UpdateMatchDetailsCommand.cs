@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Typer.API.Commands.Match.UpdateMatchDetails
+namespace Typer.Application.Commands.Match.UpdateMatchDetails
 {
     public class UpdateMatchDetailsCommand : IRequest<Unit>
     {

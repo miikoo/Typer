@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Typer.API.Commands.MatchPrediction.CreateMatchPrediction
+namespace Typer.Application.Commands.MatchPrediction.CreateMatchPrediction
 {
     public class CreateMatchPredictionCommand : IRequest<long>
     {

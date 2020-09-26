@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Typer.API.Commands.Gameweek.UpdateGameweek
+namespace Typer.Application.Commands.Gameweek.UpdateGameweek
 {
     public class UpdateGameweekCommand : IRequest<Unit>
     {

@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Domain.Interfaces;
 
-namespace Typer.API.Commands.Match.CreateMatch
+namespace Typer.Application.Commands.Match.CreateMatch
 {
     public class CreateMatchCommandHandler : IRequestHandler<CreateMatchCommand, long>
     {

@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Domain.Interfaces;
 
-namespace Typer.API.Commands.Season.DeleteSeason
+namespace Typer.Application.Commands.Season.DeleteSeason
 {
     public class DeleteSeasonCommandHandler : IRequestHandler<DeleteSeasonCommand, Unit>
     {

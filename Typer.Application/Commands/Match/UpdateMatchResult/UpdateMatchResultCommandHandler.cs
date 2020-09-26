@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Typer.Domain.Interfaces;
 
-namespace Typer.API.Commands.Match.UpdateMatchResult
+namespace Typer.Application.Commands.Match.UpdateMatchResult
 {
     public class UpdateMatchResultCommandHandler : IRequestHandler<UpdateMatchResultCommand, Unit>
     {
