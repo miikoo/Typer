@@ -13,23 +13,21 @@ namespace Typer.Infrastructure.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly TyperContext _context;
-        private readonly IJwtGenerator _jwtGenerator;
 
         public UserRepository(TyperContext context, IJwtGenerator jwtGenerator)
         {
             _context = context;
-            _jwtGenerator = jwtGenerator;
         }
 
-        public async Task<string> Authenticate(string username, string password)
+        public async Task<Guid> AuthenticateAsync(string username, string password)
         {
             var user = await (from u in _context.Users
                         where u.Username == username && u.Password == password
                         select u).FirstAsync();
-            return _jwtGenerator.Generate(user.UserId, user.Role);
+            return user.UserId;
         }
 
-        public async Task<string> CreateAsync(string username, string email, string password) //todo token w hadnlerze generowanie
+        public async Task<Guid> CreateAsync(string username, string email, string password) //todo token w hadnlerze generowanie
         {
             var user = new DbUser
             {
@@ -40,8 +38,7 @@ namespace Typer.Infrastructure.Repositories
             };
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
-            var token = _jwtGenerator.Generate(user.UserId, user.Role); // query pomieszane
-            return token;
+            return user.UserId;
         }
 
         public async Task DeleteAsync(Guid userid)

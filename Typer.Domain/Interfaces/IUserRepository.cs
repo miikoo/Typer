@@ -7,10 +7,10 @@ namespace Typer.Domain.Interfaces
 {
     public interface IUserRepository
     {
-        Task<string> CreateAsync(string username, string email, string password);
+        Task<Guid> CreateAsync(string username, string email, string password);
         Task<User> GetAsync(Guid userId);
         Task UpdateAsync(Guid userId, string username, string email, string password, Roles role);
         Task DeleteAsync(Guid userid);
-        Task<string> Authenticate(string username, string password);
+        Task<Guid> AuthenticateAsync(string username, string password);
     }
 }
