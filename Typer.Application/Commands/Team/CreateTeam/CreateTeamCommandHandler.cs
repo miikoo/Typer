@@ -8,7 +8,7 @@ using Typer.Domain.Interfaces;
 
 namespace Typer.Application.Commands.Team.CreateTeam
 {
-    public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, long>
+    public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, Unit>
     {
         private readonly ITeamRepository _teamRepository;
 
@@ -17,7 +17,10 @@ namespace Typer.Application.Commands.Team.CreateTeam
             _teamRepository = teamRepository;
         }
 
-        public async Task<long> Handle(CreateTeamCommand request, CancellationToken cancellationToken)
-            => await _teamRepository.CreateAsync(request.TeamName);
+        public async Task<Unit> Handle(CreateTeamCommand request, CancellationToken cancellationToken)
+        {
+            await _teamRepository.CreateAsync(request.TeamName);
+            return Unit.Value;
+        }
     }
 }

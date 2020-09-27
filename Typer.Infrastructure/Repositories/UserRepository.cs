@@ -2,11 +2,11 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Typer.Application.Services;
 using Typer.Domain.Enums;
 using Typer.Domain.Interfaces;
 using Typer.Domain.Models;
 using Typer.Infrastructure.Entities;
-using Typer.Infrastructure.Services;
 
 namespace Typer.Infrastructure.Repositories
 {
@@ -29,7 +29,7 @@ namespace Typer.Infrastructure.Repositories
             return _jwtGenerator.Generate(user.UserId, user.Role);
         }
 
-        public async Task<string> CreateAsync(string username, string email, string password)
+        public async Task<string> CreateAsync(string username, string email, string password) //todo token w hadnlerze generowanie
         {
             var user = new DbUser
             {
@@ -40,7 +40,7 @@ namespace Typer.Infrastructure.Repositories
             };
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
-            var token = _jwtGenerator.Generate(user.UserId, user.Role);
+            var token = _jwtGenerator.Generate(user.UserId, user.Role); // query pomieszane
             return token;
         }
 

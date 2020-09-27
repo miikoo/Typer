@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Typer.Application.Commands.MatchPrediction.CreateMatchPrediction
 {
-    public class CreateMatchPredictionCommand : IRequest<long>
+    public class CreateMatchPredictionCommand : IRequest<Unit>
     {
         public long MatchId { get; set; }
         public int AwayTeamGoalsPrediction { get; set; }

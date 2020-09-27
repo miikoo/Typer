@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Typer.Application.Commands.Season.CreateSeason
 {
-    public class CreateSeasonCommand : IRequest<long>
+    public class CreateSeasonCommand : IRequest<Unit>
     {
         public int StartYear { get; set; }
         public int EndYear { get; set; }

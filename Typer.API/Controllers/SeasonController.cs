@@ -11,6 +11,7 @@ namespace Typer.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json", "application/xml")]
     [AllowAnonymous]
     public class SeasonController : ControllerBase
     {

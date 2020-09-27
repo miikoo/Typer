@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Typer.Application.Commands.Gameweek.CreateGameweek
 {
-    public class CreateGameweekCommand : IRequest<long>
+    public class CreateGameweekCommand : IRequest<Unit>
     {
         public int GameweekNumber { get; set; }
         public long SeasonId { get; set; }

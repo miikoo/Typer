@@ -19,17 +19,23 @@ namespace Typer.Infrastructure.QueryHandlers.Gameweeks
         }
 
         public async Task<List<GameweekDto>> Handle(GetCurrentSeasonGameweeksQuery request, CancellationToken cancellationToken)
-            => await (from g in _context.Gameweeks
-                      where g.SeasonId ==
-                       (from m in _context.Matches where m.MatchDate > DateTime.UtcNow
-                        join cg in _context.Gameweeks on m.GameweekId equals cg.GameweekId
-                        join s in _context.Seasons on cg.SeasonId equals s.SeasonId
-                        orderby m.MatchDate select s.SeasonId).First()
-                      select new GameweekDto
-                      {
-                          GameweekId = g.GameweekId,
-                          GameweekNumber = g.GameweekNumber
-                      }
+        {
+            var seasonId = await (from m in _context.Matches
+                                  where m.MatchDate > DateTime.UtcNow
+                                  join cg in _context.Gameweeks on m.GameweekId equals cg.GameweekId
+                                  join s in _context.Seasons on cg.SeasonId equals s.SeasonId
+                                  orderby m.MatchDate
+                                  select s.SeasonId).FirstAsync();
+
+            return await (from g in _context.Gameweeks
+                          where g.SeasonId == seasonId
+                          select new GameweekDto
+                          {
+                              GameweekId = g.GameweekId,
+                              GameweekNumber = g.GameweekNumber
+                          }
                       ).ToListAsync();
+        }
+
     }
 }

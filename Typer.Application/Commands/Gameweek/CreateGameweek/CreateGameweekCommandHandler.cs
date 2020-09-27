@@ -8,7 +8,7 @@ using Typer.Domain.Interfaces;
 
 namespace Typer.Application.Commands.Gameweek.CreateGameweek
 {
-    public class CreateGameweekCommandHandler : IRequestHandler<CreateGameweekCommand, long>
+    public class CreateGameweekCommandHandler : IRequestHandler<CreateGameweekCommand, Unit>
     {
         private readonly IGameweekRepository _gameweekRepository;
 
@@ -17,7 +17,10 @@ namespace Typer.Application.Commands.Gameweek.CreateGameweek
             _gameweekRepository = gameweekRepository;
         }
 
-        public async Task<long> Handle(CreateGameweekCommand request, CancellationToken cancellationToken)
-            => await _gameweekRepository.CreateAsync(request.SeasonId, request.GameweekNumber);
+        public async Task<Unit> Handle(CreateGameweekCommand request, CancellationToken cancellationToken)
+        {
+            await _gameweekRepository.CreateAsync(request.SeasonId, request.GameweekNumber);
+            return Unit.Value;
+        }
     }
 }

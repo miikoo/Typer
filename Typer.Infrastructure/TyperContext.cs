@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text;
 using Typer.Infrastructure.Entities;
 
@@ -10,8 +10,13 @@ namespace Typer.Infrastructure
     {
         public TyperContext(DbContextOptions<TyperContext> options) : base(options)
         {
+        }
+
+        public TyperContext()
+        {
 
         }
+
 
         public DbSet<DbMatch> Matches { get; set; }
         public DbSet<DbGameweek> Gameweeks { get; set; }

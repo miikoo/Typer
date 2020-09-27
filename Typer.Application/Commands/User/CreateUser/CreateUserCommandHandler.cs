@@ -8,7 +8,7 @@ using Typer.Domain.Interfaces;
 
 namespace Typer.Application.Commands.User.CreateUser
 {
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, string>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, UserDto>
     {
         private readonly IUserRepository _userRepository;
 
@@ -17,7 +17,13 @@ namespace Typer.Application.Commands.User.CreateUser
             _userRepository = userRepository;
         }
 
-        public async Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)
-            => await _userRepository.CreateAsync(request.Username, request.Email, request.Password);
+        public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        {
+            var token = await _userRepository.CreateAsync(request.Username, request.Email, request.Password);
+            return new UserDto
+            {
+                Token = token
+            };
+        }
     }
 }

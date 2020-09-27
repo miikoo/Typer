@@ -8,7 +8,7 @@ using Typer.Domain.Interfaces;
 
 namespace Typer.Application.Commands.User.Authenticate
 {
-    public class AuthenticateCommandHandler : IRequestHandler<AuthenticateCommand, string>
+    public class AuthenticateCommandHandler : IRequestHandler<AuthenticateCommand, UserDto>
     {
         private readonly IUserRepository _userRepository;
 
@@ -17,7 +17,13 @@ namespace Typer.Application.Commands.User.Authenticate
             _userRepository = userRepository;
         }
 
-        public Task<string> Handle(AuthenticateCommand request, CancellationToken cancellationToken)
-            => _userRepository.Authenticate(request.Username, request.Password);
+        public async Task<UserDto> Handle(AuthenticateCommand request, CancellationToken cancellationToken)
+        {
+            var token = await _userRepository.Authenticate(request.Username, request.Password);
+            return new UserDto
+            {
+                Token = token
+            };
+        }
     }
 }

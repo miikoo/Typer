@@ -8,7 +8,7 @@ using Typer.Domain.Interfaces;
 
 namespace Typer.Application.Commands.Match.CreateMatch
 {
-    public class CreateMatchCommandHandler : IRequestHandler<CreateMatchCommand, long>
+    public class CreateMatchCommandHandler : IRequestHandler<CreateMatchCommand, Unit>
     {
         private readonly IMatchRepository _matchRepository;
 
@@ -17,7 +17,10 @@ namespace Typer.Application.Commands.Match.CreateMatch
             _matchRepository = matchRepository;
         }
 
-        public async Task<long> Handle(CreateMatchCommand request, CancellationToken cancellationToken)
-            => await _matchRepository.CreateAsync(request.HomeTeamId, request.AwayTeamId, request.GameweekId, request.MatchDate);
+        public async Task<Unit> Handle(CreateMatchCommand request, CancellationToken cancellationToken)
+        {
+            await _matchRepository.CreateAsync(request.HomeTeamId, request.AwayTeamId, request.GameweekId, request.MatchDate);
+            return Unit.Value;
+        }
     }
 }

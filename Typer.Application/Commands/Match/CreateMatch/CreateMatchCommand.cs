@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Typer.Application.Commands.Match.CreateMatch
 {
-    public class CreateMatchCommand : IRequest<long>
+    public class CreateMatchCommand : IRequest<Unit>
     {
         public long HomeTeamId { get; set; }
         public long AwayTeamId { get; set; }

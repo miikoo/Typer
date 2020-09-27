@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using Typer.Domain.Enums;
-using static Typer.Infrastructure.Entities.DbUser;
 
-namespace Typer.Infrastructure.Services
+namespace Typer.Application.Services
 {
     public interface IJwtGenerator
     {
