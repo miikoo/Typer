@@ -8,7 +8,7 @@ using Typer.Domain.Interfaces;
 
 namespace Typer.Application.Commands.Season.CreateSeason
 {
-    public class CreateSeasonCommandHandler : IRequestHandler<CreateSeasonCommand, Unit>
+    public class CreateSeasonCommandHandler : IRequestHandler<CreateSeasonCommand, SeasonDto>
     {
         private readonly ISeasonRepository _seasonRepository;
 
@@ -17,10 +17,10 @@ namespace Typer.Application.Commands.Season.CreateSeason
             _seasonRepository = seasonRepository;
         }
 
-        public async Task<Unit> Handle(CreateSeasonCommand request, CancellationToken cancellationToken)
-        { 
-            await _seasonRepository.CreateAsync(request.StartYear, request.EndYear);
-            return Unit.Value;
+        public async Task<SeasonDto> Handle(CreateSeasonCommand request, CancellationToken cancellationToken)
+        {
+            var id = await _seasonRepository.CreateAsync(request.StartYear, request.EndYear);
+            return new SeasonDto(id);
         }
     }
 }

@@ -27,7 +27,10 @@ namespace Typer.Application.Commands.User.Authenticate
             var token = _jwtGenerator.Generate(userId, user.Role);
             return new UserDto
             {
-                Token = token
+                Token = token,
+                Role = user.Role,
+                UserId = user.UserId,
+                Username = user.Username
             };
         }
     }

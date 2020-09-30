@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Hosting;
 using Pomelo.EntityFrameworkCore.MySql;
 using Typer.Infrastructure;
@@ -15,6 +16,8 @@ using Typer.Domain.Interfaces;
 using Microsoft.OpenApi.Models;
 using Typer.Infrastructure.QueryHandlers.Seasons;
 using Typer.Application.Commands.Season.CreateSeason;
+using Typer.Application.Services;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Typer.API
 {
@@ -52,6 +55,7 @@ namespace Typer.API
                 .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
             services.AddMediatR(typeof(GetSeasonsQueryHandler), typeof(CreateSeasonCommandHandler));
             services.AddScoped<IMediator, Mediator>();
+            services.AddTransient<IJwtGenerator, JwtGenerator>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ISeasonRepository, SeasonRepository>();
             services.AddTransient<IGameweekRepository, GameweekRepository>();
@@ -59,7 +63,19 @@ namespace Typer.API
             services.AddTransient<ITeamRepository, TeamRepository>();
             services.AddTransient<IMatchPredictionRepository, MatchPredictionRepository>();
             services.ConfigureSwaggerGen(options => { options.CustomSchemaIds(x => x.FullName); });
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "Typer API", Version = "v1" }); });
+            services.AddSwaggerGen(c => 
+            { 
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Typer API", Version = "v1" });
+
+                c.AddSecurityDefinition("oauth2", new ApiKeyScheme
+                {
+                    Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",
+                    In = "header",
+                    Name = "Authorization",
+                    Type = "apiKey"
+                });
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
+            });
 
 
         }
@@ -77,8 +93,7 @@ namespace Typer.API
                 .AllowAnyHeader());
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Typer API V1"); });
-
-            app.UseAuthorization();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

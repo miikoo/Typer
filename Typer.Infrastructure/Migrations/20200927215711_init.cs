@@ -1,6 +1,6 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using MySql.Data.EntityFrameworkCore.Metadata;
 
 namespace Typer.Infrastructure.Migrations
 {
@@ -13,7 +13,7 @@ namespace Typer.Infrastructure.Migrations
                 columns: table => new
                 {
                     SeasonId = table.Column<long>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     StartYear = table.Column<int>(nullable: false),
                     EndYear = table.Column<int>(nullable: false)
                 },
@@ -27,7 +27,7 @@ namespace Typer.Infrastructure.Migrations
                 columns: table => new
                 {
                     TeamId = table.Column<long>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     TeamName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -39,7 +39,7 @@ namespace Typer.Infrastructure.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<byte[]>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
                     Username = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
                     Password = table.Column<string>(nullable: true),
@@ -55,7 +55,7 @@ namespace Typer.Infrastructure.Migrations
                 columns: table => new
                 {
                     GameweekId = table.Column<long>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     GameweekNumber = table.Column<int>(nullable: false),
                     SeasonId = table.Column<long>(nullable: false)
                 },
@@ -75,7 +75,7 @@ namespace Typer.Infrastructure.Migrations
                 columns: table => new
                 {
                     MatchId = table.Column<long>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     HomeTeamGoals = table.Column<int>(nullable: true),
                     AwayTeamGoals = table.Column<int>(nullable: true),
                     MatchDate = table.Column<DateTime>(nullable: false),
@@ -113,7 +113,7 @@ namespace Typer.Infrastructure.Migrations
                     MatchPredictionId = table.Column<long>(nullable: false),
                     HomeTeamGoalPrediction = table.Column<int>(nullable: false),
                     AwayTeamGoalPrediction = table.Column<int>(nullable: false),
-                    UserId = table.Column<byte[]>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
                     MatchId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>

@@ -27,7 +27,7 @@ namespace Typer.Infrastructure.Repositories
             return user.UserId;
         }
 
-        public async Task<Guid> CreateAsync(string username, string email, string password) //todo token w hadnlerze generowanie
+        public async Task<Guid> CreateAsync(string username, string email, string password)
         {
             var user = new DbUser
             {

@@ -9,7 +9,7 @@ using Typer.Infrastructure;
 namespace Typer.Infrastructure.Migrations
 {
     [DbContext(typeof(TyperContext))]
-    [Migration("20200926202923_init")]
+    [Migration("20200927215711_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,7 +60,7 @@ namespace Typer.Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("MatchDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("MatchId");
 
@@ -87,9 +87,8 @@ namespace Typer.Infrastructure.Migrations
                     b.Property<long>("MatchId")
                         .HasColumnType("bigint");
 
-                    b.Property<byte[]>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("MatchPredictionId");
 
@@ -122,7 +121,7 @@ namespace Typer.Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("TeamName")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("TeamId");
 
@@ -131,21 +130,21 @@ namespace Typer.Infrastructure.Migrations
 
             modelBuilder.Entity("Typer.Infrastructure.Entities.DbUser", b =>
                 {
-                    b.Property<byte[]>("UserId")
+                    b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Password")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("UserId");
 
