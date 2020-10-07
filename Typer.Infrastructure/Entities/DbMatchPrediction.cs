@@ -7,8 +7,8 @@ namespace Typer.Infrastructure.Entities
     public class DbMatchPrediction
     {
         public long MatchPredictionId { get; set; }
-        public int HomeTeamGoalPrediction { get; set; }
-        public int AwayTeamGoalPrediction { get; set; }
+        public int? HomeTeamGoalPrediction { get; set; }
+        public int? AwayTeamGoalPrediction { get; set; }
 
         public Guid UserId { get; set; }
         public long MatchId { get; set; }

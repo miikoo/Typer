@@ -9,26 +9,19 @@ using Typer.Domain.Interfaces;
 
 namespace Typer.Application.Commands.User.CreateUser
 {
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, UserDto>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Unit>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IJwtGenerator _jwtGenerator;
 
-        public CreateUserCommandHandler(IUserRepository userRepository, IJwtGenerator jwtGenerator)
+        public CreateUserCommandHandler(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-            _jwtGenerator = jwtGenerator;
         }
 
-        public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var userId = await _userRepository.CreateAsync(request.Username, request.Email, request.Password);
-            var user = await _userRepository.GetAsync(userId);
-            var token = _jwtGenerator.Generate(userId, user.Role);
-            return new UserDto
-            {
-                Token = token
-            };
+            await _userRepository.CreateAsync(request.Username, request.Email, request.Password);
+            return Unit.Value;
         }
     }
 }

@@ -9,7 +9,7 @@ using Typer.Infrastructure;
 namespace Typer.Infrastructure.Migrations
 {
     [DbContext(typeof(TyperContext))]
-    [Migration("20200927215711_init")]
+    [Migration("20201001222824_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,12 +76,13 @@ namespace Typer.Infrastructure.Migrations
             modelBuilder.Entity("Typer.Infrastructure.Entities.DbMatchPrediction", b =>
                 {
                     b.Property<long>("MatchPredictionId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<int>("AwayTeamGoalPrediction")
+                    b.Property<int?>("AwayTeamGoalPrediction")
                         .HasColumnType("int");
 
-                    b.Property<int>("HomeTeamGoalPrediction")
+                    b.Property<int?>("HomeTeamGoalPrediction")
                         .HasColumnType("int");
 
                     b.Property<long>("MatchId")
@@ -91,6 +92,8 @@ namespace Typer.Infrastructure.Migrations
                         .HasColumnType("char(36)");
 
                     b.HasKey("MatchPredictionId");
+
+                    b.HasIndex("MatchId");
 
                     b.HasIndex("UserId");
 
@@ -185,7 +188,7 @@ namespace Typer.Infrastructure.Migrations
                 {
                     b.HasOne("Typer.Infrastructure.Entities.DbMatch", "Match")
                         .WithMany("MatchPredictions")
-                        .HasForeignKey("MatchPredictionId")
+                        .HasForeignKey("MatchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

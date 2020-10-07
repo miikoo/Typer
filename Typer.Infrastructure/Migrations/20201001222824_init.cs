@@ -110,9 +110,10 @@ namespace Typer.Infrastructure.Migrations
                 name: "MatchPredictions",
                 columns: table => new
                 {
-                    MatchPredictionId = table.Column<long>(nullable: false),
-                    HomeTeamGoalPrediction = table.Column<int>(nullable: false),
-                    AwayTeamGoalPrediction = table.Column<int>(nullable: false),
+                    MatchPredictionId = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    HomeTeamGoalPrediction = table.Column<int>(nullable: true),
+                    AwayTeamGoalPrediction = table.Column<int>(nullable: true),
                     UserId = table.Column<Guid>(nullable: false),
                     MatchId = table.Column<long>(nullable: false)
                 },
@@ -120,8 +121,8 @@ namespace Typer.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_MatchPredictions", x => x.MatchPredictionId);
                     table.ForeignKey(
-                        name: "FK_MatchPredictions_Matches_MatchPredictionId",
-                        column: x => x.MatchPredictionId,
+                        name: "FK_MatchPredictions_Matches_MatchId",
+                        column: x => x.MatchId,
                         principalTable: "Matches",
                         principalColumn: "MatchId",
                         onDelete: ReferentialAction.Cascade);
@@ -152,6 +153,11 @@ namespace Typer.Infrastructure.Migrations
                 name: "IX_Matches_HomeTeamId",
                 table: "Matches",
                 column: "HomeTeamId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MatchPredictions_MatchId",
+                table: "MatchPredictions",
+                column: "MatchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MatchPredictions_UserId",

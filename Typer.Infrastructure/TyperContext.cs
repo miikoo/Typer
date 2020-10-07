@@ -103,7 +103,7 @@ namespace Typer.Infrastructure
                 .Entity<DbMatchPrediction>()
                 .HasOne(x => x.Match)
                 .WithMany(x => x.MatchPredictions)
-                .HasForeignKey(x => x.MatchPredictionId);
+                .HasForeignKey(x => x.MatchId);
 
             //User
             builder

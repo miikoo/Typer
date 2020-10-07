@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Typer.Application.Commands.User.Authenticate;
 using Typer.Application.Commands.User.CreateUser;
+using Typer.Application.Queries.User;
 
 namespace Typer.API.Controllers
 {
@@ -30,5 +31,12 @@ namespace Typer.API.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticateCommand command)
             => Ok(await _mediator.Send(command));
+
+        [HttpGet("getUserPoints/{id}")]
+        public async Task<IActionResult> GetUserPoints([FromRoute]Guid id)
+            => Ok(await _mediator.Send(new GetUserPointsQuery
+            {
+                UserId = id
+            }));
     }
 }

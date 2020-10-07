@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Typer.Application.Commands.User.CreateUser
 {
-    public class CreateUserCommand : IRequest<UserDto>
+    public class CreateUserCommand : IRequest<Unit>
     {
         public string Email { get; set; }
         public string Username { get; set; }

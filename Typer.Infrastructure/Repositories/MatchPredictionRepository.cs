@@ -18,7 +18,7 @@ namespace Typer.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<long> CreateAsync(int homeTeamGoalPrediction, int awayTeamGoalPrediction, Guid userId, long matchId)
+        public async Task<long> CreateAsync(int? homeTeamGoalPrediction, int? awayTeamGoalPrediction, Guid userId, long matchId)
         {
             var prediction = new DbMatchPrediction
             {
@@ -62,7 +62,7 @@ namespace Typer.Infrastructure.Repositories
                           MatchPredictionId = m.MatchPredictionId
                       }).ToListAsync();
 
-        public async Task UpdateAsync(int homeTeamGoalPrediction, int awayTeamGoalPrediction, long matchPredictionId)
+        public async Task UpdateAsync(int? homeTeamGoalPrediction, int? awayTeamGoalPrediction, long matchPredictionId)
         {
             var prediction = await (from m in _context.MatchPredictions
                                     where m.MatchPredictionId == matchPredictionId

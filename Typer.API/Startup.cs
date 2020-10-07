@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder;
+        using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +18,8 @@ using Typer.Infrastructure.QueryHandlers.Seasons;
 using Typer.Application.Commands.Season.CreateSeason;
 using Typer.Application.Services;
 using Swashbuckle.AspNetCore.Filters;
+using FluentValidation.AspNetCore;
+using Typer.Application.Commands.Gameweek.CreateGameweek;
 
 namespace Typer.API
 {
@@ -52,7 +54,8 @@ namespace Typer.API
                     };
                 });
             services.AddMvc(x => x.EnableEndpointRouting = false)
-                .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
+                .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0)
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateGameweekCommandValidator>());
             services.AddMediatR(typeof(GetSeasonsQueryHandler), typeof(CreateSeasonCommandHandler));
             services.AddScoped<IMediator, Mediator>();
             services.AddTransient<IJwtGenerator, JwtGenerator>();
