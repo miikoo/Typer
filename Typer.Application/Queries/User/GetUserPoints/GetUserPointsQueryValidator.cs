@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Typer.Application.Queries.User
+namespace Typer.Application.Queries.User.GetUserPoints
 {
     class GetUserPointsQueryValidator : AbstractValidator<GetUserPointsQuery>
     {

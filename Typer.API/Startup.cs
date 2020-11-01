@@ -1,25 +1,23 @@
-        using Microsoft.AspNetCore.Builder;
+using FluentValidation.AspNetCore;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Hosting;
-using Pomelo.EntityFrameworkCore.MySql;
-using Typer.Infrastructure;
-using MediatR;
-using Typer.Infrastructure.Repositories;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Typer.Domain.Interfaces;
 using Microsoft.OpenApi.Models;
-using Typer.Infrastructure.QueryHandlers.Seasons;
-using Typer.Application.Commands.Season.CreateSeason;
-using Typer.Application.Services;
 using Swashbuckle.AspNetCore.Filters;
-using FluentValidation.AspNetCore;
+using System.Text;
 using Typer.Application.Commands.Gameweek.CreateGameweek;
+using Typer.Application.Commands.Season.CreateSeason;
+using Typer.Application.Services.JwtGenerator;
+using Typer.Application.Services.PasswordHasher;
+using Typer.Domain.Interfaces;
+using Typer.Infrastructure;
+using Typer.Infrastructure.QueryHandlers.Seasons;
+using Typer.Infrastructure.Repositories;
 
 namespace Typer.API
 {
@@ -65,6 +63,7 @@ namespace Typer.API
             services.AddTransient<IMatchRepository, MatchRepository>();
             services.AddTransient<ITeamRepository, TeamRepository>();
             services.AddTransient<IMatchPredictionRepository, MatchPredictionRepository>();
+            services.AddTransient<IPasswordHasher, PasswordHasher>();
             services.ConfigureSwaggerGen(options => { options.CustomSchemaIds(x => x.FullName); });
             services.AddSwaggerGen(c => 
             { 
@@ -93,7 +92,8 @@ namespace Typer.API
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader());
+                .AllowAnyHeader()
+                .AllowAnyOrigin());
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Typer API V1"); });
             app.UseAuthentication();

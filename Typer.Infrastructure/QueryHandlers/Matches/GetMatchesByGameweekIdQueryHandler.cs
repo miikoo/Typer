@@ -31,6 +31,6 @@ namespace Typer.Infrastructure.QueryHandlers.Matches
                           HomeTeamName = ht.TeamName,
                           MatchDate = m.MatchDate,
                           MatchId = m.MatchId
-                      }).ToListAsync();
+                      }).OrderBy(x => x.MatchDate).ToListAsync();
     }
 }

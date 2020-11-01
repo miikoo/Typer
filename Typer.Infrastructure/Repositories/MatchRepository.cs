@@ -18,14 +18,16 @@ namespace Typer.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<long> CreateAsync(long homeTeamId, long awayTeamId, long gameweekId, DateTime matchDate)
+        public async Task<long> CreateAsync(long homeTeamId, long awayTeamId, long gameweekId, DateTime matchDate, int? homeTeamGoals, int? awayTeamGoals)
         {
             var match = new DbMatch
             {
                 AwayTeamId = awayTeamId,
                 HomeTeamId = homeTeamId,
                 GameweekId = gameweekId,
-                MatchDate = matchDate
+                MatchDate = matchDate,
+                AwayTeamGoals = awayTeamGoals,
+                HomeTeamGoals = homeTeamGoals
             };
             await _context.AddAsync(match);
             await _context.SaveChangesAsync();

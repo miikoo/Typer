@@ -19,7 +19,8 @@ namespace Typer.Application.Commands.Match.CreateMatch
 
         public async Task<MatchDto> Handle(CreateMatchCommand request, CancellationToken cancellationToken)
         {
-            var id = await _matchRepository.CreateAsync(request.HomeTeamId, request.AwayTeamId, request.GameweekId, request.MatchDate);
+            var id = await _matchRepository.CreateAsync(request.HomeTeamId, request.AwayTeamId, request.GameweekId, request.MatchDate, 
+                request.HomeTeamGoals, request.AwayTeamGoals);
             return new MatchDto(id);
         }
     }

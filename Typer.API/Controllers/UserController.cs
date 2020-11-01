@@ -2,12 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Typer.Application.Commands.User.Authenticate;
 using Typer.Application.Commands.User.CreateUser;
-using Typer.Application.Queries.User;
+using Typer.Application.Queries.User.GetUserPoints;
+using Typer.Application.Queries.User.GetUsersPoints;
 
 namespace Typer.API.Controllers
 {
@@ -32,11 +31,17 @@ namespace Typer.API.Controllers
         public async Task<IActionResult> Authenticate([FromBody] AuthenticateCommand command)
             => Ok(await _mediator.Send(command));
 
+        [Authorize]
         [HttpGet("getUserPoints/{id}")]
         public async Task<IActionResult> GetUserPoints([FromRoute]Guid id)
             => Ok(await _mediator.Send(new GetUserPointsQuery
             {
                 UserId = id
             }));
+
+        [AllowAnonymous]
+        [HttpGet("getUsersPoints")]
+        public async Task<IActionResult> GetUsersPoints()
+            => Ok(await _mediator.Send(new GetUsersPointsQuery()));
     }
 }

@@ -10,6 +10,8 @@ namespace Typer.Application.Commands.Match.CreateMatch
     {
         public long HomeTeamId { get; set; }
         public long AwayTeamId { get; set; }
+        public int? HomeTeamGoals { get; set; }
+        public int? AwayTeamGoals { get; set; }
         public DateTime MatchDate { get; set; }
         public long GameweekId { get; set; }
     }

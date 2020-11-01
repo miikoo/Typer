@@ -53,6 +53,15 @@ namespace Typer.Infrastructure.Repositories
                           TeamName = t.TeamName
                       }).FirstAsync();
 
+        public async Task<Team> GetByName(string name)
+            => await (from t in _context.Teams
+                      where t.TeamName == name
+                      select new Team
+                      {
+                          TeamId = t.TeamId,
+                          TeamName = t.TeamName
+                      }).FirstOrDefaultAsync();
+
         public async Task UpdateAsync(long teamId, string teamName)
         {
             var team = await (from t in _context.Teams where t.TeamId == teamId select t).FirstAsync();

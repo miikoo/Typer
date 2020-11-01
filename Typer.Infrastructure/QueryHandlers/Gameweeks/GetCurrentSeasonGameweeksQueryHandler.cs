@@ -34,7 +34,7 @@ namespace Typer.Infrastructure.QueryHandlers.Gameweeks
                               GameweekId = g.GameweekId,
                               GameweekNumber = g.GameweekNumber
                           }
-                      ).ToListAsync();
+                      ).OrderBy(x => x.GameweekNumber).ToListAsync();
         }
 
     }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Typer.API.Queries.Seasons.GetSeasonQuery;
+using Typer.Application.Commands.Season.BuildSeason;
 using Typer.Application.Commands.Season.CreateSeason;
 using Typer.Application.Commands.Season.DeleteSeason;
 using Typer.Application.Commands.Season.UpdateSeason;
@@ -38,6 +39,7 @@ namespace Typer.API.Controllers
                 EndYear = command.EndYear
             }));
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetSeasons()
             => Ok(await _mediator.Send(new GetSeasonsQuery { }));
@@ -49,6 +51,10 @@ namespace Typer.API.Controllers
             {
                 SeasonId = id
             }));
+
+        [HttpPost("buildSeason")]
+        public async Task<IActionResult> BuildSeason([FromBody]BuildSeasonCommand command)
+            => Ok(await _mediator.Send(command));
 
     }
 }

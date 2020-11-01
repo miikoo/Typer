@@ -17,6 +17,7 @@ namespace Typer.Infrastructure.Entities
         public string Email { get; set; }
         public string Password { get; set; }
         public Roles Role { get; set; }
+        public string Salt { get; set; }
 
         public virtual ICollection<DbMatchPrediction> MatchPredictions { get; set; }
 

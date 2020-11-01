@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Typer.Application.Services;
+using Typer.Application.Services.JwtGenerator;
 using Typer.Domain.Enums;
 using Typer.Domain.Interfaces;
 using Typer.Domain.Models;
@@ -19,22 +19,15 @@ namespace Typer.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Guid> AuthenticateAsync(string username, string password)
-        {
-            var user = await (from u in _context.Users
-                        where u.Username == username && u.Password == password
-                        select u).FirstAsync();
-            return user.UserId;
-        }
-
-        public async Task<Guid> CreateAsync(string username, string email, string password)
+        public async Task<Guid> CreateAsync(string username, string email, string password, string salt)
         {
             var user = new DbUser
             {
                 Email = email,
                 Password = password,
                 Role = Roles.User,
-                Username = username
+                Username = username,
+                Salt = salt
             };
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
@@ -56,8 +49,35 @@ namespace Typer.Infrastructure.Repositories
                           Email = u.Email,
                           Role = u.Role,
                           UserId = u.UserId,
-                          Username = u.Username
+                          Username = u.Username,
+                          Salt = u.Salt
                       }).FirstAsync();
+
+        public async Task<User> GetUserByUsername(string username)
+            => await (from u in _context.Users
+                     where u.Username == username
+                     select new User
+                     {
+                         Email = u.Email,
+                         Role = u.Role,
+                         UserId = u.UserId,
+                         Username = u.Username,
+                         Salt = u.Salt,
+                         Password = u.Password
+                     }).FirstOrDefaultAsync();
+
+        public async Task<User> GetUserByEmail(string email)
+            => await (from u in _context.Users
+                      where u.Email == email
+                      select new User
+                      {
+                          Email = u.Email,
+                          Role = u.Role,
+                          UserId = u.UserId,
+                          Username = u.Username,
+                          Salt = u.Salt,
+                          Password = u.Password
+                      }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(Guid userId, string username, string email, string password, Roles role)
         {

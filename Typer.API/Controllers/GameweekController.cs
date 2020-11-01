@@ -45,10 +45,12 @@ namespace Typer.API.Controllers
         public async Task<IActionResult> UpdateGameweek([FromBody] UpdateGameweekCommand command)
             => Ok(await _mediator.Send(command));
 
+        [Authorize]
         [HttpGet("getCurrentSeasonGameweeks")]
         public async Task<IActionResult> GetCurrentSeasonGameweeks()
             => Ok(await _mediator.Send(new GetCurrentSeasonGameweeksQuery { }));
 
+        [Authorize]
         [HttpGet("getGameweeksBySeasonId/{id}")]
         public async Task<IActionResult> GetGameweeksBySeasonIdQuery([FromRoute] int id)
             => Ok(await _mediator.Send(new GetGameweeksBySeasonIdQuery

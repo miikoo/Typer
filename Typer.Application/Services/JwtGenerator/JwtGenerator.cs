@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using Typer.Domain.Enums;
 
-namespace Typer.Application.Services
+namespace Typer.Application.Services.JwtGenerator
 {
     public class JwtGenerator : IJwtGenerator
     {

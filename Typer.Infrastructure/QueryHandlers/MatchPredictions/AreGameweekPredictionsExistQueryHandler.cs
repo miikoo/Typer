@@ -22,7 +22,7 @@ namespace Typer.Infrastructure.QueryHandlers.MatchPredictions
             => await (from mp in _context.MatchPredictions
                       join m in _context.Matches on new { mp.MatchId, request.GameweekId } equals new { m.MatchId, m.GameweekId }
                       join u in _context.Users on mp.UserId equals u.UserId
-                      where mp.UserId == u.UserId && mp.MatchId == m.MatchId && m.GameweekId == request.GameweekId
+                      where mp.UserId == request.UserId && mp.MatchId == m.MatchId && m.GameweekId == request.GameweekId
                       select mp
                       ).AnyAsync() ? new MatchPredictionDto(true) : new MatchPredictionDto(false);
     }

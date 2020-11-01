@@ -9,7 +9,7 @@ namespace Typer.Application.Commands.Gameweek.DeleteGameweek
     {
         public DeleteGameweekCommandValidator()
         {
-            RuleFor(x => x.GameweekId).WithMessage("brak id do usunięcia");
+            RuleFor(x => x.GameweekId).NotEmpty().WithMessage("brak id do usunięcia");
         }
     }
 }

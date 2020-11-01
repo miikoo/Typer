@@ -11,5 +11,6 @@ namespace Typer.Domain.Interfaces
         Task<Team> GetAsync(long teamId);
         Task UpdateAsync(long teamId, string teamName);
         Task DeleteAsync(long teamId);
+        Task<Team> GetByName(string name);
     }
 }

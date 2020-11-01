@@ -9,6 +9,7 @@ using Typer.Application.Commands.Team.CreateTeam;
 using Typer.Application.Commands.Team.DeleteTeam;
 using Typer.Application.Commands.Team.UpdateTeam;
 using Typer.Application.Queries.Teams.GetTeamsQuery;
+using Typer.Application.Queries.Teams.GetTeamsStats;
 
 namespace Typer.API.Controllers
 {
@@ -41,9 +42,14 @@ namespace Typer.API.Controllers
         public async Task<IActionResult> UpdateTeam([FromBody] UpdateTeamCommand command)
             => Ok(await _mediator.Send(command));
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetTeams()
-            => Ok(await _mediator.Send(new GetTeamsQuery { }));
+            => Ok(await _mediator.Send(new GetTeamsQuery()));
+
+        [HttpGet("getTeamStats")]
+        public async Task<IActionResult> GetTeamsStats()
+            => Ok(await _mediator.Send(new GetTeamsStatsQuery()));
 
     }
 }

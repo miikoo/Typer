@@ -10,7 +10,7 @@ namespace Typer.Application.Commands.Gameweek.CreateGameweek
         public CreateGameweekCommandValidator()
         {
             RuleFor(x => x.SeasonId).NotEmpty().WithMessage("seasonId nie może być puste");
-            RuleFor(x => x.GameweekNumber).InclusiveBetween(0,50).WithMessage("zły numer kolejki");
+            RuleFor(x => x.GameweekNumber).InclusiveBetween(1,50).WithMessage("zły numer kolejki");
         }
     }
 }

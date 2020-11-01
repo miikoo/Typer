@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Typer.Application.Queries.User;
+using Typer.Application.Queries.User.GetUserPoints;
 
 namespace Typer.Infrastructure.QueryHandlers.User
 {
@@ -26,26 +27,23 @@ namespace Typer.Infrastructure.QueryHandlers.User
                                   join s in _context.Seasons on cg.SeasonId equals s.SeasonId
                                   orderby m.MatchDate
                                   select s.SeasonId).FirstAsync();
-
-            var exactResults = await (from mp in _context.MatchPredictions
-                                join m in _context.Matches on mp.MatchId equals m.MatchId
-                                join s in _context.Seasons on seasonId equals s.SeasonId
-                                where mp.UserId == request.UserId && s.SeasonId == seasonId && m.HomeTeamGoals != null 
-                                && m.AwayTeamGoals != null &&
-                                mp.HomeTeamGoalPrediction == m.HomeTeamGoals && mp.AwayTeamGoalPrediction == m.AwayTeamGoals
-                                select m.MatchId).ToListAsync();
-
-            var winnerResult = await (from mp in _context.MatchPredictions
-                                join m in _context.Matches on mp.MatchId equals m.MatchId
-                                join s in _context.Seasons on seasonId equals s.SeasonId
-                                where mp.UserId == request.UserId && s.SeasonId == seasonId && m.HomeTeamGoals != null
-                                && m.AwayTeamGoals != null &&
-                                ((mp.HomeTeamGoalPrediction > mp.AwayTeamGoalPrediction && m.HomeTeamGoals > m.AwayTeamGoals) ||
-                                (mp.HomeTeamGoalPrediction < mp.AwayTeamGoalPrediction && m.HomeTeamGoals < m.AwayTeamGoals) ||
-                                (mp.HomeTeamGoalPrediction == mp.AwayTeamGoalPrediction && m.HomeTeamGoals == m.AwayTeamGoals))
-                                select m.MatchId).ToListAsync();
-
-            return new UserPointsDto(exactResults.Count * 2 + winnerResult.Count);
+            var points = await (from mp in _context.MatchPredictions
+                                      join m in _context.Matches on mp.MatchId equals m.MatchId
+                                      join s in _context.Seasons on seasonId equals s.SeasonId
+                                      where mp.UserId == request.UserId && s.SeasonId == seasonId && m.HomeTeamGoals != null
+                                      && m.AwayTeamGoals != null &&
+                                      ((mp.HomeTeamGoalPrediction > mp.AwayTeamGoalPrediction && m.HomeTeamGoals > m.AwayTeamGoals) ||
+                                      (mp.HomeTeamGoalPrediction < mp.AwayTeamGoalPrediction && m.HomeTeamGoals < m.AwayTeamGoals) ||
+                                      (mp.HomeTeamGoalPrediction == mp.AwayTeamGoalPrediction && m.HomeTeamGoals == m.AwayTeamGoals))
+                                      select m.MatchId).CountAsync() +
+                                await (from mp in _context.MatchPredictions
+                                       join m in _context.Matches on mp.MatchId equals m.MatchId
+                                       join s in _context.Seasons on seasonId equals s.SeasonId
+                                       where mp.UserId == request.UserId && s.SeasonId == seasonId && m.HomeTeamGoals != null
+                                       && m.AwayTeamGoals != null &&
+                                       mp.HomeTeamGoalPrediction == m.HomeTeamGoals && mp.AwayTeamGoalPrediction == m.AwayTeamGoals
+                                       select m.MatchId).CountAsync() * 2;
+            return new UserPointsDto(points);
         }
     }
 }
