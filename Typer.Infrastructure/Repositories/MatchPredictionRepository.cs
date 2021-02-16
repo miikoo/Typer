@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Typer.Domain.Interfaces;
+using Typer.Domain.Interfaces.Repositories;
 using Typer.Domain.Models;
 using Typer.Infrastructure.Entities;
 
@@ -18,21 +18,13 @@ namespace Typer.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<long> CreateAsync(int? homeTeamGoalPrediction, int? awayTeamGoalPrediction, Guid userId, long matchId)
+        public async Task CreateAsync(params MatchPrediction[] matchPredictions)
         {
-            var prediction = new DbMatchPrediction
-            {
-                HomeTeamGoalPrediction = homeTeamGoalPrediction,
-                AwayTeamGoalPrediction = awayTeamGoalPrediction,
-                MatchId = matchId,
-                UserId = userId
-            };
-            await _context.AddAsync(prediction);
+            await _context.AddRangeAsync(matchPredictions.Select(x => DbMatchPrediction.Create(x)));
             await _context.SaveChangesAsync();
-            return prediction.MatchPredictionId;
         }
 
-        public async Task DeleteAsync(long matchPredictionId)
+        public async Task DeleteAsync(Guid matchPredictionId)
         {
             var prediction = await (from m in _context.MatchPredictions
                                     where m.MatchPredictionId == matchPredictionId
@@ -41,34 +33,39 @@ namespace Typer.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<MatchPrediction> GetAsync(long matchPredictionId)
+        public async Task<MatchPrediction> GetAsync(Guid matchPredictionId)
             => await (from m in _context.MatchPredictions
                       where m.MatchPredictionId == matchPredictionId
-                      select new MatchPrediction
-                      {
-                          AwayTeamGoalPrediction = m.AwayTeamGoalPrediction,
-                          HomeTeamGoalPrediction = m.HomeTeamGoalPrediction,
-                          MatchPredictionId = m.MatchPredictionId
+                      select new MatchPrediction(m.MatchPredictionId, m.HomeTeamGoalPrediction, m.AwayTeamGoalPrediction,
+                          m.MatchId, m.UserId)).FirstAsync();
 
-                      }).FirstAsync();
-
-        public async Task<List<MatchPrediction>> GetAsync(Guid userId)
+        public async Task<List<MatchPrediction>> GetByUserIdAsync(Guid userId)
             => await (from m in _context.MatchPredictions
                       where m.UserId == userId
-                      select new MatchPrediction
-                      {
-                          AwayTeamGoalPrediction = m.AwayTeamGoalPrediction,
-                          HomeTeamGoalPrediction = m.HomeTeamGoalPrediction,
-                          MatchPredictionId = m.MatchPredictionId
-                      }).ToListAsync();
+                      select new MatchPrediction(m.MatchPredictionId, m.HomeTeamGoalPrediction, m.AwayTeamGoalPrediction,
+                          m.MatchId, m.UserId)).ToListAsync();
 
-        public async Task UpdateAsync(int? homeTeamGoalPrediction, int? awayTeamGoalPrediction, long matchPredictionId)
+        public async Task UpdateAsync(MatchPrediction matchPrediction)
         {
             var prediction = await (from m in _context.MatchPredictions
-                                    where m.MatchPredictionId == matchPredictionId
+                                    where m.MatchPredictionId == matchPrediction.MatchPredictionId
                                     select m).FirstAsync();
-            prediction.HomeTeamGoalPrediction = homeTeamGoalPrediction;
-            prediction.AwayTeamGoalPrediction = awayTeamGoalPrediction;
+            prediction.HomeTeamGoalPrediction = matchPrediction.HomeTeamGoalPrediction;
+            prediction.AwayTeamGoalPrediction = matchPrediction.AwayTeamGoalPrediction;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateManyAsync(params Tuple<Guid,int?,int?>[] matchPredictions)
+        {
+            var predictions = (from mp in _context.MatchPredictions
+                               where matchPredictions.Select(x => x.Item1).Contains(mp.MatchPredictionId)
+                               select mp);
+            predictions.ToList().ForEach(x =>
+            {
+                var prediction = matchPredictions.First(y => y.Item1 == x.MatchPredictionId);
+                x.HomeTeamGoalPrediction = prediction.Item2;
+                x.AwayTeamGoalPrediction = prediction.Item3;
+            });
             await _context.SaveChangesAsync();
         }
     }

@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Typer.Application.Commands.Match.CreateMatch;
-using Typer.Application.Commands.Match.DeleteMatch;
-using Typer.Application.Commands.Match.UpdateMatchDetails;
-using Typer.Application.Commands.Match.UpdateMatchResult;
+using System;
+using System.Threading.Tasks;
+using Typer.Application.Commands.Matches.CreateMatch;
+using Typer.Application.Commands.Matches.DeleteMatch;
+using Typer.Application.Commands.Matches.UpdateMatchDetails;
+using Typer.Application.Commands.Matches.UpdateMatchResult;
 using Typer.Application.Queries.Matches.GetMatchesByGameweekId;
 
 namespace Typer.API.Controllers
@@ -34,7 +32,7 @@ namespace Typer.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMatch([FromRoute]int id)
+        public async Task<IActionResult> DeleteMatch([FromRoute]Guid id)
             => Ok(await _mediator.Send(new DeleteMatchCommand
             {
                 MatchId = id
@@ -51,7 +49,7 @@ namespace Typer.API.Controllers
             => Ok(await _mediator.Send(command));
 
         [HttpGet("getMatchesByGameweekId/{id}")]
-        public async Task<IActionResult> GetMatchesByGameweekId([FromRoute]int id)
+        public async Task<IActionResult> GetMatchesByGameweekId([FromRoute]Guid id)
             => Ok(await _mediator.Send(new GetMatchesByGameweekIdQuery
             {
                 GameweekId = id

@@ -2,14 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Typer.Application.Commands.MatchPrediction.CreateGameweekPredictions;
-using Typer.Application.Commands.MatchPrediction.CreateMatchPrediction;
-using Typer.Application.Commands.MatchPrediction.UpdateMatchPrediction;
-using Typer.Application.Commands.MatchPrediction.UpdateMatchPredictions;
+using Typer.Application.Commands.MatchPredictions.CreateGameweekPredictions;
+using Typer.Application.Commands.MatchPredictions.CreateMatchPrediction;
+using Typer.Application.Commands.MatchPredictions.UpdateMatchPrediction;
+using Typer.Application.Commands.MatchPredictions.UpdateMatchPredictions;
 using Typer.Application.Queries.MatchPredictions.AreGameweekPredictionsExist;
+using Typer.Application.Queries.MatchPredictions.GetCurrentGameweekPredictions;
 using Typer.Application.Queries.MatchPredictions.GetGameweekPredictionsByUserId;
 
 namespace Typer.API.Controllers
@@ -37,7 +36,7 @@ namespace Typer.API.Controllers
 
         [Authorize]
         [HttpGet("areGameweekPredictionsExist/{id}/{userId}")]
-        public async Task<IActionResult> AreGameweekPredictionsExist([FromRoute]int id, [FromRoute] Guid userId)
+        public async Task<IActionResult> AreGameweekPredictionsExist([FromRoute]Guid id, [FromRoute] Guid userId)
         {
             var areExist = await _mediator.Send(new AreGameweekPredictionsExistQuery
             {
@@ -49,7 +48,7 @@ namespace Typer.API.Controllers
 
         [Authorize]
         [HttpGet("getGameweekPredictionsByUserId/{id}/{userid}")]
-        public async Task<IActionResult> GetGameweekPredictionsByUserId([FromRoute]long id, [FromRoute]Guid userId)
+        public async Task<IActionResult> GetGameweekPredictionsByUserId([FromRoute]Guid id, [FromRoute]Guid userId)
             => Ok(await _mediator.Send(new GetGameweekPredictionsByUserIdQuery 
             {
                 GameweekId = id,
@@ -65,5 +64,13 @@ namespace Typer.API.Controllers
         [HttpPut("updateMatchPredictions")]
         public async Task<IActionResult> UpdateMatchPredictions([FromBody]UpdateMatchPredictionsCommand command)
             => Ok(await _mediator.Send(command));
+
+        [Authorize]
+        [HttpGet("getCurrentGameweekPredictionsByUserId/{userid}")]
+        public async Task<IActionResult> GetCurrentGameweekPredictionsByUserId([FromRoute]Guid userId)
+            => Ok(await _mediator.Send(new GetCurrentGameweekPredictionsQuery
+            {
+                UserId = userId
+            }));
     }
 }

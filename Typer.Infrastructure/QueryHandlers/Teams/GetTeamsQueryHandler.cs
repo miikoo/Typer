@@ -19,10 +19,7 @@ namespace Typer.Infrastructure.QueryHandlers.Teams
 
         public async Task<List<TeamDto>> Handle(GetTeamsQuery request, CancellationToken cancellationToken)
             => await(from t in _context.Teams
-                     select new TeamDto
-                     {
-                         TeamId = t.TeamId,
-                         TeamName = t.TeamName
-                     }).ToListAsync();
+                     select new TeamDto(t.TeamId, t.TeamName))
+                     .ToListAsync();
     }
 }

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Typer.Domain.Interfaces;
+using Typer.Domain.Interfaces.Repositories;
 using Typer.Domain.Models;
 using Typer.Infrastructure.Entities;
 
@@ -18,18 +18,13 @@ namespace Typer.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<long> CreateAsync(string TeamName)
+        public async Task CreateAsync(params Team[] teams)
         {
-            var team = new DbTeam
-            {
-                TeamName = TeamName
-            };
-            await _context.AddAsync(team);
+            await _context.AddRangeAsync(teams.Select(x => DbTeam.Create(x)));
             await _context.SaveChangesAsync();
-            return team.TeamId;
         }
 
-        public async Task DeleteAsync(long teamId)
+        public async Task DeleteAsync(Guid teamId)
         {
             var team = await (from t in _context.Teams where t.TeamId == teamId select t).FirstAsync();
             _context.Teams.Remove(team);
@@ -38,34 +33,22 @@ namespace Typer.Infrastructure.Repositories
 
         public async Task<List<Team>> GetAsync()
             => await (from t in _context.Teams
-                      select new Team
-                      {
-                          TeamId = t.TeamId,
-                          TeamName = t.TeamName
-                      }).ToListAsync();
+                      select new Team(t.TeamId, t.TeamName)).ToListAsync();
 
-        public async Task<Team> GetAsync(long teamId)
+        public async Task<Team> GetAsync(Guid teamId)
             => await (from t in _context.Teams
                       where t.TeamId == teamId
-                      select new Team
-                      {
-                          TeamId = t.TeamId,
-                          TeamName = t.TeamName
-                      }).FirstAsync();
+                      select new Team(t.TeamId, t.TeamName)).FirstAsync();
 
         public async Task<Team> GetByName(string name)
             => await (from t in _context.Teams
                       where t.TeamName == name
-                      select new Team
-                      {
-                          TeamId = t.TeamId,
-                          TeamName = t.TeamName
-                      }).FirstOrDefaultAsync();
+                      select new Team(t.TeamId, t.TeamName)).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(long teamId, string teamName)
+        public async Task UpdateAsync(Team team)
         {
-            var team = await (from t in _context.Teams where t.TeamId == teamId select t).FirstAsync();
-            team.TeamName = teamName;
+            var _team = await (from t in _context.Teams where t.TeamId == team.TeamId select t).FirstAsync();
+            _team.TeamName = team.TeamName;
             await _context.SaveChangesAsync();
         }
     }

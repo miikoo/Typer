@@ -1,12 +1,14 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 using Typer.API.Queries.Seasons.GetSeasonQuery;
-using Typer.Application.Commands.Season.BuildSeason;
-using Typer.Application.Commands.Season.CreateSeason;
-using Typer.Application.Commands.Season.DeleteSeason;
-using Typer.Application.Commands.Season.UpdateSeason;
+using Typer.Application.Commands.Seasons.BuildSeason;
+using Typer.Application.Commands.Seasons.CreateSeason;
+using Typer.Application.Commands.Seasons.DeleteSeason;
+using Typer.Application.Commands.Seasons.UpdateSeason;
+using Typer.Application.Commands.Seasons.UpdateSeasonResults;
 
 namespace Typer.API.Controllers
 {
@@ -39,22 +41,25 @@ namespace Typer.API.Controllers
                 EndYear = command.EndYear
             }));
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetSeasons()
             => Ok(await _mediator.Send(new GetSeasonsQuery { }));
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSeason([FromRoute] int id)
+        public async Task<IActionResult> DeleteSeason([FromRoute] Guid id)
             => Ok(await _mediator.Send(new DeleteSeasonCommand
             {
                 SeasonId = id
             }));
 
-        [HttpPost("buildSeason")]
+        [HttpPut("buildSeason")]
         public async Task<IActionResult> BuildSeason([FromBody]BuildSeasonCommand command)
             => Ok(await _mediator.Send(command));
 
+        [HttpPut("updateSeason")]
+        public async Task<IActionResult> UpdateSeasonResults([FromBody] UpdateSeasonResultsCommand command)
+            => Ok(await _mediator.Send(command));
     }
 }

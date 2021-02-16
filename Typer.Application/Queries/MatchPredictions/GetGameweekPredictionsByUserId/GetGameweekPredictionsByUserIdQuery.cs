@@ -7,7 +7,7 @@ namespace Typer.Application.Queries.MatchPredictions.GetGameweekPredictionsByUse
 {
     public class GetGameweekPredictionsByUserIdQuery : IRequest<List<MatchPredictionDto>>
     {
-        public long GameweekId { get; set; }
+        public Guid GameweekId { get; set; }
         public Guid UserId { get; set; }
     }
 }

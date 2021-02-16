@@ -10,6 +10,7 @@ namespace Typer.Application.Queries.MatchPredictions.AreGameweekPredictionsExist
         {
             AreExist = areExist;
         }
+
         public bool AreExist { get; set; }
     }
 }

@@ -6,7 +6,8 @@ namespace Typer.Application.Queries.Teams.GetTeamsStats
 {
     public class TeamStats
     {
-        public TeamStats(long teamId, string teamName, int? scoredGoals, int? concededGoals, int points, int wins, int draws, int losses)
+        public TeamStats(Guid teamId, string teamName, int? scoredGoals, int? concededGoals,
+            int points, int wins, int draws, int losses)
         {
             TeamId = teamId;
             TeamName = teamName;
@@ -18,7 +19,7 @@ namespace Typer.Application.Queries.Teams.GetTeamsStats
             Draws = draws;
         }
 
-        public long TeamId { get; set; }
+        public Guid TeamId { get; set; }
         public string TeamName { get; set; }
         public int? ScoredGoals { get; set; }
         public int? ConcededGoals { get; set; }

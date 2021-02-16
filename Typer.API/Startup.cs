@@ -10,14 +10,18 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
-using Typer.Application.Commands.Gameweek.CreateGameweek;
-using Typer.Application.Commands.Season.CreateSeason;
+using Typer.Application.Commands.Gameweeks.CreateGameweek;
+using Typer.Application.Commands.Seasons.CreateSeason;
 using Typer.Application.Services.JwtGenerator;
 using Typer.Application.Services.PasswordHasher;
-using Typer.Domain.Interfaces;
+using Typer.Domain.Interfaces.Repositories;
 using Typer.Infrastructure;
 using Typer.Infrastructure.QueryHandlers.Seasons;
 using Typer.Infrastructure.Repositories;
+using RestEase;
+using Typer.Application.Client.PLClient;
+using Typer.Domain.Interfaces.Services;
+using Typer.Infrastructure.PLClientSevice;
 
 namespace Typer.API
 {
@@ -56,6 +60,7 @@ namespace Typer.API
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateGameweekCommandValidator>());
             services.AddMediatR(typeof(GetSeasonsQueryHandler), typeof(CreateSeasonCommandHandler));
             services.AddScoped<IMediator, Mediator>();
+            services.AddTransient<IPLClientService, PLClientService>();
             services.AddTransient<IJwtGenerator, JwtGenerator>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ISeasonRepository, SeasonRepository>();
@@ -64,6 +69,8 @@ namespace Typer.API
             services.AddTransient<ITeamRepository, TeamRepository>();
             services.AddTransient<IMatchPredictionRepository, MatchPredictionRepository>();
             services.AddTransient<IPasswordHasher, PasswordHasher>();
+            services.AddTransient(x => RestClient.For<IPLClient>
+            ("https://heisenbug-premier-league-live-scores-v1.p.rapidapi.com/api/premierleague/"));
             services.ConfigureSwaggerGen(options => { options.CustomSchemaIds(x => x.FullName); });
             services.AddSwaggerGen(c => 
             { 
@@ -96,6 +103,7 @@ namespace Typer.API
                 .AllowAnyOrigin());
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Typer API V1"); });
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseAuthentication();
             app.UseMvc();
         }

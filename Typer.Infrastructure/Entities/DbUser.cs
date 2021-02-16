@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Typer.Domain.Enums;
+using Typer.Domain.Models;
 
 namespace Typer.Infrastructure.Entities
 {
@@ -21,5 +22,15 @@ namespace Typer.Infrastructure.Entities
 
         public virtual ICollection<DbMatchPrediction> MatchPredictions { get; set; }
 
+        public static DbUser Create(User user)
+            => new DbUser
+            {
+                Salt = user.Salt,
+                Email = user.Email,
+                Password = user.Password,
+                Role = user.Role,
+                Username = user.Username,
+                UserId = user.UserId
+            };
     }
 }

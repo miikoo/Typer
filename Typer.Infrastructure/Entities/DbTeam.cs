@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Typer.Domain.Models;
 
 namespace Typer.Infrastructure.Entities
 {
@@ -12,9 +13,16 @@ namespace Typer.Infrastructure.Entities
             MatchesAsAwayTeam = new HashSet<DbMatch>();
         }
 
-        public long TeamId { get; set; }
+        public Guid TeamId { get; set; }
         public string TeamName { get; set; }
         public virtual ICollection<DbMatch> MatchesAsHomeTeam { get; set; }
         public virtual ICollection<DbMatch> MatchesAsAwayTeam { get; set; }
+
+        public static DbTeam Create(Team team)
+            => new DbTeam
+            {
+                TeamName = team.TeamName,
+                TeamId = team.TeamId
+            };
     }
 }

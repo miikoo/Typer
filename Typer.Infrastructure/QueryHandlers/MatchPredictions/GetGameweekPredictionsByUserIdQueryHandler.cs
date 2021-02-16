@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -19,38 +20,44 @@ namespace Typer.Infrastructure.QueryHandlers.MatchPredictions
 
         public async Task<List<MatchPredictionDto>> Handle(GetGameweekPredictionsByUserIdQuery request, CancellationToken cancellationToken)
         {
-            var teams =  (from t in _context.Teams select t).ToList();
+            var gameweek = await (from g in _context.Gameweeks
+                                        where g.GameweekId == request.GameweekId
+                                        select g).FirstAsync();
+            var firstGameweekMatchDate = await (from g in _context.Gameweeks
+                                                       where g.GameweekId == request.GameweekId 
+                                                       join m in _context.Matches on g.GameweekId equals m.GameweekId
+                                                       orderby m.MatchDate
+                                                       select m.MatchDate).FirstAsync();
+            var lastGameweekMatchDate = await (from g in _context.Gameweeks
+                                                      where g.GameweekId == request.GameweekId
+                                                      join m in _context.Matches on g.GameweekId equals m.GameweekId
+                                                      orderby m.MatchDate
+                                                      select m.MatchDate).LastAsync();
+            var lastPastGameweekMatchDate = await (from g in _context.Gameweeks
+                                                   where g.GameweekNumber == gameweek.GameweekNumber - 1 && g.SeasonId == gameweek.SeasonId
+                                                   join m in _context.Matches on g.GameweekId equals m.GameweekId
+                                                   orderby m.MatchDate
+                                                   select m.MatchDate).LastOrDefaultAsync();
+            var firstNextGameweekMatchDate = await (from g in _context.Gameweeks
+                                                    where g.GameweekNumber == gameweek.GameweekNumber + 1 && g.SeasonId == gameweek.SeasonId
+                                                    join m in _context.Matches on g.GameweekId equals m.GameweekId
+                                                    orderby m.MatchDate
+                                                    select m.MatchDate).FirstOrDefaultAsync();
+            var gameweekStarts = firstGameweekMatchDate.AddSeconds(-((firstGameweekMatchDate - lastPastGameweekMatchDate).TotalSeconds / 2));
+            var gameweekEnds = lastGameweekMatchDate.AddSeconds((firstNextGameweekMatchDate - lastGameweekMatchDate).TotalSeconds / 2);
 
-            var matches = await (from m in _context.Matches
-                                 where m.GameweekId == request.GameweekId
-                                 select m).ToListAsync();
-
-            var predictions = (from m in matches
-                                     join mp in _context.MatchPredictions on m.MatchId equals mp.MatchId
-                                     where mp.UserId == request.UserId
-                                     select mp).ToList();
-
-            List<MatchPredictionDto> result = new List<MatchPredictionDto>();
-            foreach(var m in matches)
-            {
-                var prediction = predictions.FirstOrDefault(x => x.MatchId == m.MatchId);
-                var ht = teams.First(x => x.TeamId == m.HomeTeamId).TeamName;
-                var at = teams.First(x => x.TeamId == m.AwayTeamId).TeamName;
-                result.Add(prediction == null ? new MatchPredictionDto(null, m.HomeTeamGoals, m.AwayTeamGoals, ht, at, null, null, m.MatchDate)
-                    : new MatchPredictionDto(prediction.MatchPredictionId, m.HomeTeamGoals, m.AwayTeamGoals, ht, at,
-                    prediction.HomeTeamGoalPrediction, prediction.AwayTeamGoalPrediction, m.MatchDate));
-            }
-
-            return result;
-
-            //return await (from mp in _context.MatchPredictions
-            //    join m in _context.Matches on new { request.GameweekId, mp.MatchId } equals new { m.GameweekId, m.MatchId }
-            //    where mp.UserId == request.UserId && m.GameweekId == request.GameweekId
-            //    select new MatchPredictionDto(mp.MatchPredictionId, m.HomeTeamGoals, m.AwayTeamGoals,
-            //    teams.Where(x => x.TeamId == m.HomeTeamId).FirstOrDefault().TeamName,
-            //    teams.Where(x => x.TeamId == m.AwayTeamId).FirstOrDefault().TeamName,
-            //    mp.HomeTeamGoalPrediction, mp.AwayTeamGoalPrediction, m.MatchDate)).ToListAsync();
-
+            var matches = (from m in _context.Matches
+                              join ht in _context.Teams on m.HomeTeamId equals ht.TeamId
+                              join at in _context.Teams on m.AwayTeamId equals at.TeamId
+                              join mp in _context.MatchPredictions.Where(x => x.UserId == request.UserId) on m.MatchId
+                              equals mp.MatchId into matchPreds from mp in matchPreds.DefaultIfEmpty()
+                              where m.MatchDate > gameweekStarts && m.MatchDate < gameweekEnds
+                              let matchPredictionId = mp != null ? mp.MatchPredictionId : (Guid?)null
+                              let homeTeamGoalPrediction = mp != null ? mp.HomeTeamGoalPrediction : null
+                              let awayTeamGoalPrediction = mp != null ? mp.AwayTeamGoalPrediction : null 
+                              select new MatchPredictionDto(mp.MatchPredictionId, m.HomeTeamGoals, m.AwayTeamGoals, ht.TeamName, 
+                              at.TeamName, homeTeamGoalPrediction, awayTeamGoalPrediction, m.MatchDate)).ToList();
+            return matches.OrderBy(x => x.MatchDate).ToList();
         }
     }
 }

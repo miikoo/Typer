@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Typer.Domain.Interfaces;
+using Typer.Domain.Interfaces.Repositories;
 using Typer.Domain.Models;
 using Typer.Infrastructure.Entities;
 
@@ -18,49 +18,33 @@ namespace Typer.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<long> CreateAsync(int startYear, int endYear)
+        public async Task CreateAsync(Season season)
         {
-            var season = new DbSeason
-            {
-                EndYear = endYear,
-                StartYear = startYear
-            };
-            await _context.AddAsync(season);
+            await _context.AddAsync(DbSeason.Create(season));
             await _context.SaveChangesAsync();
-            return season.SeasonId;
         }
 
-        public async Task DeleteAsync(long seasonId)
+        public async Task DeleteAsync(Guid seasonId)
         {
             var season = await (from s in _context.Seasons where s.SeasonId == seasonId select s).FirstAsync();
             _context.Seasons.Remove(season);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Season> GetAsync(long seasonId)
+        public async Task<Season> GetAsync(Guid seasonId)
             => await (from s in _context.Seasons
                       where s.SeasonId == seasonId
-                      select new Season
-                      {
-                          StartYear = s.StartYear,
-                          SeasonId = s.SeasonId,
-                          EndYear = s.EndYear
-                      }).FirstAsync();
+                      select new Season(s.SeasonId, s.StartYear, s.EndYear)).FirstAsync();
 
         public async Task<List<Season>> GetAsync()
             => await (from s in _context.Seasons
-                      select new Season
-                      {
-                          SeasonId = s.SeasonId,
-                          EndYear = s.EndYear,
-                          StartYear = s.StartYear
-                      }).ToListAsync();
+                      select new Season(s.SeasonId, s.StartYear, s.EndYear)).ToListAsync();
 
-        public async Task UpdateAsync(long seasonId, int startYear, int endYear)
+        public async Task UpdateAsync(Season season)
         {
-            var season = await (from s in _context.Seasons where s.SeasonId == seasonId select s).FirstAsync();
-            season.StartYear = startYear;
-            season.EndYear = endYear;
+            var _season = await (from s in _context.Seasons where s.SeasonId == season.SeasonId select s).FirstAsync();
+            _season.StartYear = season.StartYear;
+            _season.EndYear = season.EndYear;
             await _context.SaveChangesAsync();
         }
     }

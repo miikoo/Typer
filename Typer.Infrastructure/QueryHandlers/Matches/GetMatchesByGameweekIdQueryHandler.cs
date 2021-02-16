@@ -19,18 +19,14 @@ namespace Typer.Infrastructure.QueryHandlers.Matches
         }
 
         public async Task<List<MatchDto>> Handle(GetMatchesByGameweekIdQuery request, CancellationToken cancellationToken)
-            => await (from m in _context.Matches
-                      join at in _context.Teams on m.AwayTeamId equals at.TeamId
-                      join ht in _context.Teams on m.HomeTeamId equals ht.TeamId
-                      where m.GameweekId == request.GameweekId
-                      select new MatchDto
-                      {
-                          AwayTeamGoals = m.AwayTeamGoals,
-                          AwayTeamName = at.TeamName,
-                          HomeTeamGoals = m.HomeTeamGoals,
-                          HomeTeamName = ht.TeamName,
-                          MatchDate = m.MatchDate,
-                          MatchId = m.MatchId
-                      }).OrderBy(x => x.MatchDate).ToListAsync();
+        {
+            var matches = await (from m in _context.Matches
+                                 join at in _context.Teams on m.AwayTeamId equals at.TeamId
+                                 join ht in _context.Teams on m.HomeTeamId equals ht.TeamId
+                                 where m.GameweekId == request.GameweekId
+                                 select new MatchDto(m.MatchId, m.HomeTeamGoals, m.AwayTeamGoals, m.MatchDate,
+                                     ht.TeamName, at.TeamName)).ToListAsync();
+            return matches.OrderBy(x => x.MatchDate).ToList();
+        }
     }
 }

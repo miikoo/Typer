@@ -2,14 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Typer.Application.Commands.Gameweek.CreateGameweek;
-using Typer.Application.Commands.Gameweek.DeleteGameweek;
-using Typer.Application.Commands.Gameweek.UpdateGameweek;
-using Typer.Application.Queries.Gameweek.GetCurrentSeasonGameweeks;
-using Typer.Application.Queries.Gameweek.GetGameweeksBySeasonId;
+using Typer.Application.Commands.Gameweeks.CreateGameweek;
+using Typer.Application.Commands.Gameweeks.DeleteGameweek;
+using Typer.Application.Commands.Gameweeks.UpdateGameweek;
+using Typer.Application.Queries.Gameweeks.GetCurrentSeasonGameweeks;
+using Typer.Application.Queries.Gameweeks.GetGameweeksBySeasonId;
 
 namespace Typer.API.Controllers
 {
@@ -34,7 +32,7 @@ namespace Typer.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGameweek([FromRoute] int id)
+        public async Task<IActionResult> DeleteGameweek([FromRoute] Guid id)
             => Ok(await _mediator.Send(new DeleteGameweekCommand
             {
                 GameweekId = id
@@ -52,7 +50,7 @@ namespace Typer.API.Controllers
 
         [Authorize]
         [HttpGet("getGameweeksBySeasonId/{id}")]
-        public async Task<IActionResult> GetGameweeksBySeasonIdQuery([FromRoute] int id)
+        public async Task<IActionResult> GetGameweeksBySeasonIdQuery([FromRoute] Guid id)
             => Ok(await _mediator.Send(new GetGameweeksBySeasonIdQuery
             {
                 SeasonId = id

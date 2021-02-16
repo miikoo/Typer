@@ -2,12 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Typer.Application.Commands.Team.CreateTeam;
-using Typer.Application.Commands.Team.DeleteTeam;
-using Typer.Application.Commands.Team.UpdateTeam;
+using Typer.Application.Commands.Teams.CreateTeam;
+using Typer.Application.Commands.Teams.DeleteTeam;
+using Typer.Application.Commands.Teams.UpdateTeam;
 using Typer.Application.Queries.Teams.GetTeamsQuery;
 using Typer.Application.Queries.Teams.GetTeamsStats;
 
@@ -31,7 +29,7 @@ namespace Typer.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTeam([FromRoute] int id)
+        public async Task<IActionResult> DeleteTeam([FromRoute] Guid id)
             => Ok(await _mediator.Send(new DeleteTeamCommand
             {
                 TeamId = id

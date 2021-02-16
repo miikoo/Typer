@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using Typer.Application.Commands.User.Authenticate;
-using Typer.Application.Commands.User.CreateUser;
-using Typer.Application.Queries.User.GetUserPoints;
-using Typer.Application.Queries.User.GetUsersPoints;
+using Typer.Application.Commands.Users.Authenticate;
+using Typer.Application.Commands.Users.CreateUser;
+using Typer.Application.Commands.Users.UpdateUser;
+using Typer.Application.Queries.Users.GetUserDetails;
+using Typer.Application.Queries.Users.GetUserPoints;
+using Typer.Application.Queries.Users.GetUsersPoints;
 
 namespace Typer.API.Controllers
 {
@@ -43,5 +45,15 @@ namespace Typer.API.Controllers
         [HttpGet("getUsersPoints")]
         public async Task<IActionResult> GetUsersPoints()
             => Ok(await _mediator.Send(new GetUsersPointsQuery()));
+
+        [AllowAnonymous]
+        [HttpGet("getUserDetails/{username}")]
+        public async Task<IActionResult> GetUserDetails([FromRoute] string username)
+            => Ok(await _mediator.Send(new GetUserDetailsQuery { Username = username }));
+
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserCommand command)
+            => Ok(await _mediator.Send(command));
     }
 }

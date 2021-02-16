@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Typer.Application.Queries.User;
-using Typer.Application.Queries.User.GetUserPoints;
+using Typer.Application.Queries.Users.GetUserPoints;
 
 namespace Typer.Infrastructure.QueryHandlers.User
 {

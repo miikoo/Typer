@@ -19,15 +19,18 @@ namespace Typer.Infrastructure.Migrations
 
             modelBuilder.Entity("Typer.Infrastructure.Entities.DbGameweek", b =>
                 {
-                    b.Property<long>("GameweekId")
+                    b.Property<Guid>("GameweekId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<long>("ExternalId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("GameweekNumber")
                         .HasColumnType("int");
 
-                    b.Property<long>("SeasonId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("SeasonId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("GameweekId");
 
@@ -38,24 +41,24 @@ namespace Typer.Infrastructure.Migrations
 
             modelBuilder.Entity("Typer.Infrastructure.Entities.DbMatch", b =>
                 {
-                    b.Property<long>("MatchId")
+                    b.Property<Guid>("MatchId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("char(36)");
 
                     b.Property<int?>("AwayTeamGoals")
                         .HasColumnType("int");
 
-                    b.Property<long>("AwayTeamId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("AwayTeamId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<long>("GameweekId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("GameweekId")
+                        .HasColumnType("char(36)");
 
                     b.Property<int?>("HomeTeamGoals")
                         .HasColumnType("int");
 
-                    b.Property<long>("HomeTeamId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("HomeTeamId")
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("MatchDate")
                         .HasColumnType("datetime(6)");
@@ -73,9 +76,9 @@ namespace Typer.Infrastructure.Migrations
 
             modelBuilder.Entity("Typer.Infrastructure.Entities.DbMatchPrediction", b =>
                 {
-                    b.Property<long>("MatchPredictionId")
+                    b.Property<Guid>("MatchPredictionId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("char(36)");
 
                     b.Property<int?>("AwayTeamGoalPrediction")
                         .HasColumnType("int");
@@ -83,8 +86,8 @@ namespace Typer.Infrastructure.Migrations
                     b.Property<int?>("HomeTeamGoalPrediction")
                         .HasColumnType("int");
 
-                    b.Property<long>("MatchId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("MatchId")
+                        .HasColumnType("char(36)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
@@ -100,12 +103,15 @@ namespace Typer.Infrastructure.Migrations
 
             modelBuilder.Entity("Typer.Infrastructure.Entities.DbSeason", b =>
                 {
-                    b.Property<long>("SeasonId")
+                    b.Property<Guid>("SeasonId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("char(36)");
 
                     b.Property<int>("EndYear")
                         .HasColumnType("int");
+
+                    b.Property<long>("ExternalId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("StartYear")
                         .HasColumnType("int");
@@ -117,9 +123,9 @@ namespace Typer.Infrastructure.Migrations
 
             modelBuilder.Entity("Typer.Infrastructure.Entities.DbTeam", b =>
                 {
-                    b.Property<long>("TeamId")
+                    b.Property<Guid>("TeamId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("TeamName")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");

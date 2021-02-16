@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Typer.Domain.Interfaces;
+using Typer.Domain.Interfaces.Repositories;
 using Typer.Domain.Models;
 using Typer.Infrastructure.Entities;
 
@@ -18,64 +18,40 @@ namespace Typer.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<long> CreateAsync(long homeTeamId, long awayTeamId, long gameweekId, DateTime matchDate, int? homeTeamGoals, int? awayTeamGoals)
+        public async Task CreateAsync(params Match[] matches)
         {
-            var match = new DbMatch
-            {
-                AwayTeamId = awayTeamId,
-                HomeTeamId = homeTeamId,
-                GameweekId = gameweekId,
-                MatchDate = matchDate,
-                AwayTeamGoals = awayTeamGoals,
-                HomeTeamGoals = homeTeamGoals
-            };
-            await _context.AddAsync(match);
+            await _context.AddRangeAsync(matches.Select(x => DbMatch.Create(x)));
             await _context.SaveChangesAsync();
-            return match.MatchId;
         }
 
-        public async Task DeleteAsync(long matchId)
+        public async Task DeleteAsync(Guid matchId)
         {
             var match = await (from m in _context.Matches where m.MatchId == matchId select m).FirstAsync();
             _context.Matches.Remove(match);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Match> GetByIdAsync(long matchId)
+        public async Task<Match> GetByIdAsync(Guid matchId)
             => await (from m in _context.Matches
                       where m.MatchId == matchId
-                      select new Match
-                      {
-                          AwayTeamGoals = m.AwayTeamGoals,
-                          HomeTeamGoals = m.HomeTeamGoals,
-                          MatchDate = m.MatchDate,
-                          MatchId = m.MatchId,
-                          AwayTeamId = m.AwayTeamId,
-                          HomeTeamId = m.HomeTeamId
-                      }).FirstAsync();
+                      select new Match(m.MatchId, m.HomeTeamGoals, m.AwayTeamGoals, m.MatchDate, m.AwayTeamId,
+                          m.HomeTeamId, m.GameweekId)).FirstAsync();
 
-        public async Task<List<Match>> GetAsync(long gameweekId)
+        public async Task<List<Match>> GetAsync(Guid gameweekId)
             => await (from m in _context.Matches
                       where m.GameweekId == gameweekId
-                      select new Match
-                      {
-                          AwayTeamGoals = m.AwayTeamGoals,
-                          HomeTeamGoals = m.HomeTeamGoals,
-                          MatchDate = m.MatchDate,
-                          MatchId = m.MatchId,
-                          AwayTeamId = m.AwayTeamId,
-                          HomeTeamId = m.HomeTeamId
-                      }).ToListAsync();
+                      select new Match(m.MatchId, m.HomeTeamGoals, m.AwayTeamGoals, m.MatchDate, m.AwayTeamId,
+                          m.HomeTeamId, m.GameweekId)).ToListAsync();
 
-        public async Task UpdateAsync(long matchId, int? homeTeamGoals, int? awayTeamGoals,
-            DateTime matchDate, long homeTeamId, long awayTeamId)
+        public async Task UpdateAsync(params Match[] matches)
         {
-            var match = await (from m in _context.Matches where m.MatchId == matchId select m).FirstAsync();
-            match.HomeTeamGoals = homeTeamGoals;
-            match.AwayTeamGoals = awayTeamGoals;
-            match.MatchDate = matchDate;
-            match.AwayTeamId = awayTeamId;
-            match.HomeTeamId = homeTeamId;
+            foreach(var match in matches)
+            {
+                var _match = await (from m in _context.Matches where m.MatchId == match.MatchId select m).FirstAsync();
+                _match.HomeTeamGoals = match.HomeTeamGoals;
+                _match.AwayTeamGoals = match.AwayTeamGoals;
+                _match.MatchDate = match.MatchDate;
+            }
             await _context.SaveChangesAsync();
         }
     }
