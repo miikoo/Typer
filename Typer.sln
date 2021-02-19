@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Typer.Infrastructure", "Typ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Typer.Domain", "Typer.Domain\Typer.Domain.csproj", "{1FA58E7E-513F-4EF5-B90A-40EC8A80166B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Typer.Application", "Typer.Application\Typer.Application.csproj", "{9EA47EAA-0190-49F2-A831-405CFD13B792}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Typer.Application", "Typer.Application\Typer.Application.csproj", "{9EA47EAA-0190-49F2-A831-405CFD13B792}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Typer.Tests", "Typer.Tests\Typer.Tests.csproj", "{358D1B57-FB21-4A3E-A191-0FFC625EA32E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{9EA47EAA-0190-49F2-A831-405CFD13B792}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EA47EAA-0190-49F2-A831-405CFD13B792}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EA47EAA-0190-49F2-A831-405CFD13B792}.Release|Any CPU.Build.0 = Release|Any CPU
+		{358D1B57-FB21-4A3E-A191-0FFC625EA32E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{358D1B57-FB21-4A3E-A191-0FFC625EA32E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{358D1B57-FB21-4A3E-A191-0FFC625EA32E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{358D1B57-FB21-4A3E-A191-0FFC625EA32E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
