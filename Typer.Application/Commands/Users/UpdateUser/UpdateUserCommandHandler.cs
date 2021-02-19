@@ -37,14 +37,14 @@ namespace Typer.Application.Commands.Users.UpdateUser
                     var isExist = await _userRepository.GetUserByUsername(request.Username);
                     if (isExist != null) throw new TyperBadRequestException("Login jest zajęty");
                 }
-                await _userRepository.UpdateAsync(new User(user.UserId, request.Username, request.Email, Roles.User,
+                await _userRepository.UpdateAsync(new User(user.UserId, request.Username, request.Email, user.Role,
                     user.Password, user.Salt));
                 return Unit.Value;
             }
             if(request.NewPassword != request.ConfirmNewPassword)
                 throw new TyperBadRequestException("Hasła nie są identyczne");
             var hashedPassword = _passwordHasher.GenerateHash(request.NewPassword, user.Salt);
-            await _userRepository.UpdateAsync(new User(user.UserId, request.Username, request.Email, Roles.User,
+            await _userRepository.UpdateAsync(new User(user.UserId, request.Username, request.Email, user.Role,
                     hashedPassword, user.Salt));
             return Unit.Value;
         }
