@@ -9,6 +9,7 @@ using Typer.Application.Commands.Seasons.CreateSeason;
 using Typer.Application.Commands.Seasons.DeleteSeason;
 using Typer.Application.Commands.Seasons.UpdateSeason;
 using Typer.Application.Commands.Seasons.UpdateSeasonResults;
+using Typer.Application.Queries.Seasons.IsNextSeasonExist;
 
 namespace Typer.API.Controllers
 {
@@ -61,5 +62,10 @@ namespace Typer.API.Controllers
         [HttpPut("updateSeason")]
         public async Task<IActionResult> UpdateSeasonResults([FromBody] UpdateSeasonResultsCommand command)
             => Ok(await _mediator.Send(command));
+
+        [AllowAnonymous]
+        [HttpGet("isNextSeasonExist")]
+        public async Task<IActionResult> IsNextSeasonExist()
+            => Ok(await _mediator.Send(new IsNextSeasonExistQuery()));
     }
 }

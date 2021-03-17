@@ -22,7 +22,8 @@ namespace Typer.API.Controllers
             _mediator = mediator;
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreateTeam([FromBody]CreateTeamCommand command)
             => Ok(await _mediator.Send(command));

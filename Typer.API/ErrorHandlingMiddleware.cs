@@ -49,3 +49,9 @@ namespace Typer.API
         }
     }
 }
+//     case TyperBadRequestException:
+//httpStatusCode = HttpStatusCode.BadRequest;
+//break;
+//                case TyperUnauthorizedException:
+//httpStatusCode = HttpStatusCode.Unauthorized;
+//break;

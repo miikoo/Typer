@@ -9,7 +9,7 @@ using Typer.Infrastructure;
 namespace Typer.Infrastructure.Migrations
 {
     [DbContext(typeof(TyperContext))]
-    [Migration("20201129205111_init")]
+    [Migration("20210301163927_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

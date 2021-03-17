@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Typer.Application.Queries.MatchPredictions.GetCurrentGameweekPredictions
+namespace Typer.Application.Queries.MatchPredictions.GetNextPredictions
 {
     public class MatchPredictionDto
     {

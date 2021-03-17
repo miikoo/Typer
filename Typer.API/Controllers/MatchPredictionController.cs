@@ -10,6 +10,7 @@ using Typer.Application.Commands.MatchPredictions.UpdateMatchPredictions;
 using Typer.Application.Queries.MatchPredictions.AreGameweekPredictionsExist;
 using Typer.Application.Queries.MatchPredictions.GetCurrentGameweekPredictions;
 using Typer.Application.Queries.MatchPredictions.GetGameweekPredictionsByUserId;
+using Typer.Application.Queries.MatchPredictions.GetNextPredictions;
 
 namespace Typer.API.Controllers
 {
@@ -72,5 +73,10 @@ namespace Typer.API.Controllers
             {
                 UserId = userId
             }));
+
+        [Authorize]
+        [HttpGet("getNextPredictions/{userId}/{numOfPred}")]
+        public async Task<IActionResult> GetNextPredictions([FromRoute]Guid userId, [FromRoute]int numOfPred)
+            => Ok(await _mediator.Send(new GetNextPredictionsQuery { NumOfPredictions = numOfPred, UserId = userId}));
     }
 }

@@ -1,4 +1,4 @@
-using FluentValidation.AspNetCore;
+﻿using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -19,16 +19,17 @@ using Typer.Infrastructure;
 using Typer.Infrastructure.QueryHandlers.Seasons;
 using Typer.Infrastructure.Repositories;
 using RestEase;
-using System;
 using Typer.Application.Client.PLClient;
 using Typer.Domain.Interfaces.Services;
 using Typer.Infrastructure.PLClientSevice;
+using Typer.API;
+using System;
 
-namespace Typer.API
+namespace Typer.Tests
 {
-    public class Startup
+    class TestStartup
     {
-        public Startup(IConfiguration configuration)
+        public TestStartup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
@@ -39,9 +40,8 @@ namespace Typer.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            var _connectionString = Configuration.GetConnectionString("TyperConnectionString");
             services.AddDbContext<TyperContext>(options =>
-            options.UseMySql(_connectionString, ServerVersion.AutoDetect(_connectionString)));
+            options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
             var key = Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings").GetSection("Secret").Value);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -73,29 +73,14 @@ namespace Typer.API
             services.AddTransient<IPasswordHasher, PasswordHasher>();
             services.AddTransient(x => RestClient.For<IPLClient>
             ("https://heisenbug-premier-league-live-scores-v1.p.rapidapi.com/api/premierleague/"));
-            services.ConfigureSwaggerGen(options => { options.CustomSchemaIds(x => x.FullName); });
-            services.AddSwaggerGen(c => 
-            { 
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Typer API", Version = "v1" });
-
-                c.AddSecurityDefinition("oauth2", new ApiKeyScheme
-                {
-                    Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",
-                    In = "header",
-                    Name = "Authorization",
-                    Type = "apiKey"
-                });
-                c.OperationFilter<SecurityRequirementsOperationFilter>();
-            });
-
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-          //  if (env.IsDevelopment())
-               // app.UseHsts();
+            //  if (env.IsDevelopment())
+            // app.UseHsts();
 
             //app.UseHttpsRedirection();
             app.UseCors(x => x
@@ -103,8 +88,6 @@ namespace Typer.API
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowAnyOrigin());
-            app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Typer API V1"); });
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseAuthentication();
             app.UseMvc();
