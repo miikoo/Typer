@@ -9,7 +9,6 @@ namespace Typer.Infrastructure.Entities
     {
         public DbMatch()
         {
-            MatchPredictions = new HashSet<DbMatchPrediction>();
         }
 
         public Guid MatchId { get; set; }
@@ -20,14 +19,10 @@ namespace Typer.Infrastructure.Entities
         public Guid HomeTeamId { get; set; }
         public Guid AwayTeamId { get; set; }
         public Guid GameweekId { get; set; }
-
-        public virtual ICollection<DbMatchPrediction> MatchPredictions { get; set; }
-        public virtual DbGameweek Gameweek { get; set; }
-        public virtual DbTeam HomeTeam { get; set; }
-        public virtual DbTeam AwayTeam { get; set; }
+        
 
         public static DbMatch Create(Match match)
-            => new DbMatch
+            => new()
             {
                 AwayTeamGoals = match.AwayTeamGoals,
                 AwayTeamId = match.AwayTeamId,

@@ -1,72 +1,90 @@
-﻿using MediatR;
+﻿using Dapper;
+using MediatR;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading;
-using System.Linq;
 using System.Threading.Tasks;
 using System;
-using Microsoft.EntityFrameworkCore;
 using Typer.Application.Queries.Users.GetUsersPoints;
-using System.Net.Http;
+using System.Linq;
 
 namespace Typer.Infrastructure.QueryHandlers.User
 {
     public class GetUsersPointsQueryHandler : IRequestHandler<GetUsersPointsQuery, List<UserPointsDto>>
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _dbConnection;
 
-        public GetUsersPointsQueryHandler(TyperContext context)
+        public GetUsersPointsQueryHandler(IDbConnection dbConnection)
         {
-            _context = context;
+            _dbConnection = dbConnection;
         }
 
         public async Task<List<UserPointsDto>> Handle(GetUsersPointsQuery request, CancellationToken cancellationToken)
         {
+            var seasonId = await _dbConnection.ExecuteScalarAsync<Guid>(
+                "SELECT TOP 1 s.SeasonId " +
+                "FROM Matches m " +
+                "INNER JOIN Gameweeks g ON m.GameweekId = g.GameweekId " +
+                "INNER JOIN Seasons s ON g.SeasonId = s.SeasonId " +
+                "WHERE m.MatchDate > @CurrentDate " +
+                "ORDER BY m.MatchDate", new { CurrentDate = DateTime.UtcNow });
 
-            var seasonId = await(from m in _context.Matches
-                                 where m.MatchDate > DateTime.UtcNow
-                                 join cg in _context.Gameweeks on m.GameweekId equals cg.GameweekId
-                                 join s in _context.Seasons on cg.SeasonId equals s.SeasonId
-                                 orderby m.MatchDate
-                                 select s.SeasonId).FirstAsync();
-
-            var users = await (from u in _context.Users select new { 
-                Username=u.Username,
-                UserId=u.UserId
-            }).ToListAsync();
+            var users = await _dbConnection.QueryAsync(
+                "SELECT Username, UserId FROM Users");
 
             var result = new List<UserPointsDto>();
+
             foreach (var user in users)
             {
-                var exactPredictions  = await (from mp in _context.MatchPredictions
-                                   join m in _context.Matches on mp.MatchId equals m.MatchId
-                                   join s in _context.Seasons on seasonId equals s.SeasonId
-                                   where mp.UserId == user.UserId && s.SeasonId == seasonId && m.HomeTeamGoals != null
-                                   && mp.AwayTeamGoalPrediction != null && mp.HomeTeamGoalPrediction != null &&
-                                   mp.HomeTeamGoalPrediction == m.HomeTeamGoals && mp.AwayTeamGoalPrediction == m.AwayTeamGoals
-                                   select m.MatchId).CountAsync();
+                var exactPredictions = await _dbConnection.ExecuteScalarAsync<int>(
+                    "SELECT COUNT(mp.MatchId) " +
+                    "FROM MatchPredictions mp " +
+                    "INNER JOIN Matches m ON mp.MatchId = m.MatchId " +
+                    "INNER JOIN Seasons s ON m.SeasonId = s.SeasonId " +
+                    "WHERE mp.UserId = @UserId " +
+                    "AND s.SeasonId = @SeasonId " +
+                    "AND m.HomeTeamGoals IS NOT NULL " +
+                    "AND mp.AwayTeamGoalPrediction IS NOT NULL " +
+                    "AND mp.HomeTeamGoalPrediction IS NOT NULL " +
+                    "AND mp.HomeTeamGoalPrediction = m.HomeTeamGoals " +
+                    "AND mp.AwayTeamGoalPrediction = m.AwayTeamGoals",
+                    new { UserId = user.UserId, SeasonId = seasonId });
 
-                var winnerPredictions = await (from mp in _context.MatchPredictions
-                                            join m in _context.Matches on mp.MatchId equals m.MatchId
-                                            join s in _context.Seasons on seasonId equals s.SeasonId
-                                            where mp.UserId == user.UserId && s.SeasonId == seasonId && m.HomeTeamGoals != null
-                                            && mp.AwayTeamGoalPrediction != null && mp.HomeTeamGoalPrediction != null &&
-                                            ((mp.HomeTeamGoalPrediction > mp.AwayTeamGoalPrediction && m.HomeTeamGoals > m.AwayTeamGoals) ||
-                                            (mp.HomeTeamGoalPrediction < mp.AwayTeamGoalPrediction && m.HomeTeamGoals < m.AwayTeamGoals) ||
-                                            (mp.HomeTeamGoalPrediction == mp.AwayTeamGoalPrediction && m.HomeTeamGoals == m.AwayTeamGoals))
-                                            select m.MatchId).CountAsync() - exactPredictions;
+                var winnerPredictions = await _dbConnection.ExecuteScalarAsync<int>(
+                    "SELECT COUNT(mp.MatchId) - @ExactPredictions " +
+                    "FROM MatchPredictions mp " +
+                    "INNER JOIN Matches m ON mp.MatchId = m.MatchId " +
+                    "INNER JOIN Seasons s ON m.SeasonId = s.SeasonId " +
+                    "WHERE mp.UserId = @UserId " +
+                    "AND s.SeasonId = @SeasonId " +
+                    "AND m.HomeTeamGoals IS NOT NULL " +
+                    "AND mp.AwayTeamGoalPrediction IS NOT NULL " +
+                    "AND mp.HomeTeamGoalPrediction IS NOT NULL " +
+                    "AND ((mp.HomeTeamGoalPrediction > mp.AwayTeamGoalPrediction " +
+                    "AND m.HomeTeamGoals > m.AwayTeamGoals) OR " +
+                    "(mp.HomeTeamGoalPrediction < mp.AwayTeamGoalPrediction " +
+                    "AND m.HomeTeamGoals < m.AwayTeamGoals) OR " +
+                    "(mp.HomeTeamGoalPrediction = mp.AwayTeamGoalPrediction " +
+                    "AND m.HomeTeamGoals = m.AwayTeamGoals))",
+                    new { UserId = user.UserId, SeasonId = seasonId, ExactPredictions = exactPredictions });
 
-                var incorrectPredictions = await (from mp in _context.MatchPredictions
-                                                  join m in _context.Matches on mp.MatchId equals m.MatchId
-                                                  join s in _context.Seasons on seasonId equals s.SeasonId
-                                                  where mp.UserId == user.UserId && s.SeasonId == seasonId && m.HomeTeamGoals != null
-                                                  && m.AwayTeamGoals != null && mp.HomeTeamGoalPrediction != null &&
-                                                  mp.AwayTeamGoalPrediction !=null
-                                                  select m.MatchId).CountAsync() - exactPredictions - winnerPredictions;
-                result.Add(new UserPointsDto(exactPredictions * 3+ winnerPredictions, user.Username, exactPredictions, incorrectPredictions,
-                    winnerPredictions));
+                var incorrectPredictions = await _dbConnection.ExecuteScalarAsync<int>(
+                    "SELECT COUNT(mp.MatchId) - @ExactPredictions - @WinnerPredictions " +
+                    "FROM MatchPredictions mp " +
+                    "INNER JOIN Matches m ON mp.MatchId = m.MatchId " +
+                    "INNER JOIN Seasons s ON m.SeasonId = s.SeasonId " +
+                    "WHERE mp.UserId = @UserId " +
+                    "AND s.SeasonId = @SeasonId " +
+                    "AND m.HomeTeamGoals IS NOT NULL " +
+                    "AND m.AwayTeamGoals IS NOT NULL " +
+                    "AND mp.AwayTeamGoalPrediction IS NOT NULL " +
+                    "AND mp.HomeTeamGoalPrediction IS NOT NULL",
+                    new { UserId = user.UserId, SeasonId = seasonId, ExactPredictions = exactPredictions, WinnerPredictions = winnerPredictions });
+
+                result.Add(new UserPointsDto(exactPredictions * 3 + winnerPredictions, user.Username, exactPredictions, incorrectPredictions, winnerPredictions));
             }
-            return result.OrderByDescending(x => x.Points).ThenByDescending(x => x.ExactPredictions)
-                .ThenBy(x => x.IncorrectPredictions).ToList();
+
+            return result.OrderByDescending(x => x.Points).ThenByDescending(x => x.ExactPredictions).ThenBy(x => x.IncorrectPredictions).ToList();
         }
     }
 }

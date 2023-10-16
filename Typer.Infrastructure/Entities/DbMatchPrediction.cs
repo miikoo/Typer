@@ -13,11 +13,9 @@ namespace Typer.Infrastructure.Entities
 
         public Guid UserId { get; set; }
         public Guid MatchId { get; set; }
-        public virtual DbMatch Match { get; set; }
-        public virtual DbUser User { get; set; }
 
         public static DbMatchPrediction Create(MatchPrediction matchPrediction)
-            => new DbMatchPrediction
+            => new()
             {
                 AwayTeamGoalPrediction = matchPrediction.AwayTeamGoalPrediction,
                 HomeTeamGoalPrediction = matchPrediction.HomeTeamGoalPrediction,

@@ -4,11 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using Typer.API.Queries.Seasons.GetSeasonQuery;
-using Typer.Application.Commands.Seasons.BuildSeason;
 using Typer.Application.Commands.Seasons.CreateSeason;
 using Typer.Application.Commands.Seasons.DeleteSeason;
 using Typer.Application.Commands.Seasons.UpdateSeason;
-using Typer.Application.Commands.Seasons.UpdateSeasonResults;
 using Typer.Application.Queries.Seasons.IsNextSeasonExist;
 
 namespace Typer.API.Controllers
@@ -24,9 +22,9 @@ namespace Typer.API.Controllers
             _mediator = mediator;
         }
 
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> CreateSeason([FromBody]CreateSeasonCommand command)
+        public async Task<IActionResult> CreateSeason([FromBody] CreateSeasonCommand command)
         {
             var id = await _mediator.Send(command);
             return Ok(id.SeasonId);
@@ -54,14 +52,6 @@ namespace Typer.API.Controllers
             {
                 SeasonId = id
             }));
-
-        [HttpPut("buildSeason")]
-        public async Task<IActionResult> BuildSeason([FromBody]BuildSeasonCommand command)
-            => Ok(await _mediator.Send(command));
-
-        [HttpPut("updateSeason")]
-        public async Task<IActionResult> UpdateSeasonResults([FromBody] UpdateSeasonResultsCommand command)
-            => Ok(await _mediator.Send(command));
 
         [AllowAnonymous]
         [HttpGet("isNextSeasonExist")]

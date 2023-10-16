@@ -1,7 +1,6 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using Dapper;
+using MediatR;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,19 +10,24 @@ namespace Typer.Infrastructure.QueryHandlers.MatchPredictions
 {
     public class AreGameweekPredictionsExistQueryHandler : IRequestHandler<AreGameweekPredictionsExistQuery, MatchPredictionDto>
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _connection;
 
-        public AreGameweekPredictionsExistQueryHandler(TyperContext context)
+        public AreGameweekPredictionsExistQueryHandler(IDbConnection connection)
         {
-            _context = context;
+            _connection = connection;
         }
 
         public async Task<MatchPredictionDto> Handle(AreGameweekPredictionsExistQuery request, CancellationToken cancellationToken)
-            => await (from mp in _context.MatchPredictions
-                      join m in _context.Matches on new { mp.MatchId, request.GameweekId } equals new { m.MatchId, m.GameweekId }
-                      join u in _context.Users on mp.UserId equals u.UserId
-                      where mp.UserId == request.UserId && mp.MatchId == m.MatchId && m.GameweekId == request.GameweekId
-                      select mp
-                      ).AnyAsync() ? new MatchPredictionDto(true) : new MatchPredictionDto(false);
+        {
+            var query = @"
+                SELECT TOP 1 1
+                FROM MatchPredictions AS mp
+                JOIN Matches AS m ON mp.MatchId = m.MatchId AND m.GameweekId = @GameweekId
+                WHERE mp.UserId = @UserId";
+
+            var result = await _connection.ExecuteScalarAsync<int>(query, new { request.GameweekId, request.UserId });
+
+            return new MatchPredictionDto(result > 0);
+        }
     }
 }

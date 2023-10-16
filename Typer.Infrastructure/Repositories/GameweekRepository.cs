@@ -1,51 +1,61 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 using Typer.Domain.Interfaces.Repositories;
 using Typer.Domain.Models;
-using Typer.Infrastructure.Entities;
 
 namespace Typer.Infrastructure.Repositories
 {
     public class GameweekRepository : IGameweekRepository
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _dbConnection;
 
-        public GameweekRepository(TyperContext context)
+        public GameweekRepository(IDbConnection dbConnection)
         {
-            _context = context;
+            _dbConnection = dbConnection;
         }
-
         public async Task CreateAsync(params Gameweek[] gameweeks)
         {
-            await _context.AddRangeAsync(gameweeks.Select(x => DbGameweek.Create(x)));
-            await _context.SaveChangesAsync();
+            const string insertQuery = "INSERT INTO Gameweeks (GameweekId, GameweekNumber, SeasonId) " +
+                                      "VALUES (@GameweekId, @GameweekNumber, @SeasonId)";
+
+            await _dbConnection.ExecuteAsync(insertQuery, gameweeks);
         }
 
         public async Task DeleteAsync(Guid gameweekId)
         {
-            var gameweek = await (from g in _context.Gameweeks where g.GameweekId == gameweekId select g).FirstAsync();
-            _context.Gameweeks.Remove(gameweek);
-            await _context.SaveChangesAsync();
+            const string deleteQuery = "DELETE FROM Gameweeks WHERE GameweekId = @GameweekId";
+            await _dbConnection.ExecuteAsync(deleteQuery, new { GameweekId = gameweekId });
         }
 
         public async Task<Gameweek> GetByIdAsync(Guid gameweekId)
-            => await (from g in _context.Gameweeks
-                      where g.GameweekId == gameweekId
-                      select new Gameweek(g.GameweekId, g.GameweekNumber, g.SeasonId)).FirstAsync();
+        {
+            const string selectQuery = "SELECT * FROM Gameweeks WHERE GameweekId = @GameweekId";
+            return await _dbConnection.QueryFirstOrDefaultAsync<Gameweek>(selectQuery, new { GameweekId = gameweekId });
+        }
 
         public async Task<List<Gameweek>> GetAsync(Guid seasonId)
-            => await (from g in _context.Gameweeks
-                      where g.SeasonId == seasonId
-                      select new Gameweek(g.GameweekId, g.GameweekNumber, g.SeasonId)).ToListAsync();
+        {
+            const string selectQuery = "SELECT * FROM Gameweeks WHERE SeasonId = @SeasonId";
+            return (await _dbConnection.QueryAsync<Gameweek>(selectQuery, new { SeasonId = seasonId })).ToList();
+        }
 
         public async Task UpdateAsync(Gameweek gameweek)
         {
-            var _gameweek = await (from g in _context.Gameweeks where g.GameweekId == gameweek.GameweekId select g).FirstAsync();
-            _gameweek.GameweekNumber = gameweek.GameweekNumber;
-            await _context.SaveChangesAsync();
+            const string updateQuery = "UPDATE Gameweeks " +
+                                       "SET GameweekNumber = @GameweekNumber " +
+                                       "WHERE GameweekId = @GameweekId";
+
+            await _dbConnection.ExecuteAsync(updateQuery, new
+            {
+                GameweekId = gameweek.GameweekId,
+                GameweekNumber = gameweek.GameweekNumber
+            });
         }
     }
 }

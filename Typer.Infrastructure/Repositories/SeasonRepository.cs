@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
 using System.Threading.Tasks;
+using Dapper;
 using Typer.Domain.Interfaces.Repositories;
 using Typer.Domain.Models;
 using Typer.Infrastructure.Entities;
@@ -11,41 +11,41 @@ namespace Typer.Infrastructure.Repositories
 {
     public class SeasonRepository : ISeasonRepository
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _dbConnection;
 
-        public SeasonRepository(TyperContext context)
+        public SeasonRepository(IDbConnection dbConnection)
         {
-            _context = context;
+            _dbConnection = dbConnection;
         }
 
         public async Task CreateAsync(Season season)
         {
-            await _context.AddAsync(DbSeason.Create(season));
-            await _context.SaveChangesAsync();
+            const string insertQuery = "INSERT INTO Seasons (SeasonId, StartYear, EndYear) VALUES (@SeasonId, @StartYear, @EndYear)";
+            await _dbConnection.ExecuteAsync(insertQuery, DbSeason.Create(season));
         }
 
         public async Task DeleteAsync(Guid seasonId)
         {
-            var season = await (from s in _context.Seasons where s.SeasonId == seasonId select s).FirstAsync();
-            _context.Seasons.Remove(season);
-            await _context.SaveChangesAsync();
+            const string deleteQuery = "DELETE FROM Seasons WHERE SeasonId = @SeasonId";
+            await _dbConnection.ExecuteAsync(deleteQuery, new { SeasonId = seasonId });
         }
 
         public async Task<Season> GetAsync(Guid seasonId)
-            => await (from s in _context.Seasons
-                      where s.SeasonId == seasonId
-                      select new Season(s.SeasonId, s.StartYear, s.EndYear)).FirstAsync();
+        {
+            const string selectQuery = "SELECT * FROM Seasons WHERE SeasonId = @SeasonId";
+            return await _dbConnection.QueryFirstOrDefaultAsync<Season>(selectQuery, new { SeasonId = seasonId });
+        }
 
         public async Task<List<Season>> GetAsync()
-            => await (from s in _context.Seasons
-                      select new Season(s.SeasonId, s.StartYear, s.EndYear)).ToListAsync();
+        {
+            const string selectQuery = "SELECT * FROM Seasons";
+            return (await _dbConnection.QueryAsync<Season>(selectQuery)).AsList();
+        }
 
         public async Task UpdateAsync(Season season)
         {
-            var _season = await (from s in _context.Seasons where s.SeasonId == season.SeasonId select s).FirstAsync();
-            _season.StartYear = season.StartYear;
-            _season.EndYear = season.EndYear;
-            await _context.SaveChangesAsync();
+            const string updateQuery = "UPDATE Seasons SET StartYear = @StartYear, EndYear = @EndYear WHERE SeasonId = @SeasonId";
+            await _dbConnection.ExecuteAsync(updateQuery, DbSeason.Create(season));
         }
     }
 }

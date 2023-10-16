@@ -10,7 +10,6 @@ namespace Typer.Infrastructure.Entities
     {
         public DbUser()
         {
-            MatchPredictions = new HashSet<DbMatchPrediction>();
         }
 
         public Guid UserId { get; set; }
@@ -20,10 +19,8 @@ namespace Typer.Infrastructure.Entities
         public Roles Role { get; set; }
         public string Salt { get; set; }
 
-        public virtual ICollection<DbMatchPrediction> MatchPredictions { get; set; }
-
         public static DbUser Create(User user)
-            => new DbUser
+            => new()
             {
                 Salt = user.Salt,
                 Email = user.Email,

@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 using Typer.Domain.Interfaces.Repositories;
 using Typer.Domain.Models;
 using Typer.Infrastructure.Entities;
@@ -11,48 +14,51 @@ namespace Typer.Infrastructure.Repositories
 {
     public class MatchRepository : IMatchRepository
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _dbConnection;
 
-        public MatchRepository(TyperContext context)
+        public MatchRepository(IDbConnection dbConnection)
         {
-            _context = context;
+            _dbConnection = dbConnection;
         }
 
         public async Task CreateAsync(params Match[] matches)
         {
-            await _context.AddRangeAsync(matches.Select(x => DbMatch.Create(x)));
-            await _context.SaveChangesAsync();
+            const string insertQuery = "INSERT INTO Matches (MatchId, HomeTeamGoals, AwayTeamGoals, MatchDate, HomeTeamId, AwayTeamId, GameweekId) " +
+                                      "VALUES (@MatchId, @HomeTeamGoals, @AwayTeamGoals, @MatchDate, @HomeTeamId, @AwayTeamId, @GameweekId)";
+
+            await _dbConnection.ExecuteAsync(insertQuery, matches.Select(x => DbMatch.Create(x)));
         }
 
         public async Task DeleteAsync(Guid matchId)
         {
-            var match = await (from m in _context.Matches where m.MatchId == matchId select m).FirstAsync();
-            _context.Matches.Remove(match);
-            await _context.SaveChangesAsync();
+            const string deleteQuery = "DELETE FROM Matches WHERE MatchId = @MatchId";
+            await _dbConnection.ExecuteAsync(deleteQuery, new { MatchId = matchId });
         }
 
         public async Task<Match> GetByIdAsync(Guid matchId)
-            => await (from m in _context.Matches
-                      where m.MatchId == matchId
-                      select new Match(m.MatchId, m.HomeTeamGoals, m.AwayTeamGoals, m.MatchDate, m.AwayTeamId,
-                          m.HomeTeamId, m.GameweekId)).FirstAsync();
+        {
+            const string selectQuery = "SELECT * FROM Matches WHERE MatchId = @MatchId";
+            return await _dbConnection.QueryFirstOrDefaultAsync<Match>(selectQuery, new { MatchId = matchId });
+        }
 
         public async Task<List<Match>> GetAsync(Guid gameweekId)
-            => await (from m in _context.Matches
-                      where m.GameweekId == gameweekId
-                      select new Match(m.MatchId, m.HomeTeamGoals, m.AwayTeamGoals, m.MatchDate, m.AwayTeamId,
-                          m.HomeTeamId, m.GameweekId)).ToListAsync();
+        {
+            const string selectQuery = "SELECT * FROM Matches WHERE GameweekId = @GameweekId";
+            return (await _dbConnection.QueryAsync<Match>(selectQuery, new { GameweekId = gameweekId })).ToList();
+        }
 
         public async Task UpdateAsync(params Match[] matches)
         {
-            foreach(var match in matches)
+            const string updateQuery = "UPDATE Matches " +
+                                      "SET HomeTeamGoals = @HomeTeamGoals, " +
+                                      "AwayTeamGoals = @AwayTeamGoals, " +
+                                      "MatchDate = @MatchDate " +
+                                      "WHERE MatchId = @MatchId";
+
+            foreach (var match in matches)
             {
-                var _match = await (from m in _context.Matches where m.MatchId == match.MatchId select m).FirstAsync();
-                _match.HomeTeamGoals = match.HomeTeamGoals;
-                _match.AwayTeamGoals = match.AwayTeamGoals;
-                _match.MatchDate = match.MatchDate;
+                await _dbConnection.ExecuteAsync(updateQuery, match);
             }
-            await _context.SaveChangesAsync();
         }
     }
 }

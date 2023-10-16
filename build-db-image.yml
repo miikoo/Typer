@@ -1,0 +1,26 @@
+trigger: none
+
+variables:
+  - name: Version_Number
+    value: "1"
+  - name: ImageName
+    value: "typer-db"
+  - name: Build_Number
+    value: $[counter(variables['Version_Number'], 100)]
+  - group: DbImageBuild
+
+jobs:
+  
+  - job: BuildDBImage
+    displayName: "Build Typer Database Image"
+    steps:
+      - checkout: self
+      - task: Docker@2
+        displayName: "Build And Push Database Image"
+        condition: succeeded()
+        inputs:
+          containerRegistry: "Typer Container"
+          command: "buildAndPush"
+          repository: $(ImageName)
+          Dockerfile: Dockerfile
+          tags: $(Version_Number).$(Build_Number)

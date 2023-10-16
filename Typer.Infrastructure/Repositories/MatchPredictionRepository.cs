@@ -1,72 +1,82 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 using Typer.Domain.Interfaces.Repositories;
 using Typer.Domain.Models;
-using Typer.Infrastructure.Entities;
 
 namespace Typer.Infrastructure.Repositories
 {
     public class MatchPredictionRepository : IMatchPredictionRepository
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _dbConnection;
 
-        public MatchPredictionRepository(TyperContext context)
+        public MatchPredictionRepository(IDbConnection dbConnection)
         {
-            _context = context;
+            _dbConnection = dbConnection;
         }
 
         public async Task CreateAsync(params MatchPrediction[] matchPredictions)
         {
-            await _context.AddRangeAsync(matchPredictions.Select(x => DbMatchPrediction.Create(x)));
-            await _context.SaveChangesAsync();
+            const string insertQuery = "INSERT INTO MatchPredictions (MatchPredictionId, HomeTeamGoalPrediction, AwayTeamGoalPrediction, MatchId, UserId) " +
+                                      "VALUES (@MatchPredictionId, @HomeTeamGoalPrediction, @AwayTeamGoalPrediction, @MatchId, @UserId)";
+
+            await _dbConnection.ExecuteAsync(insertQuery, matchPredictions);
         }
 
         public async Task DeleteAsync(Guid matchPredictionId)
         {
-            var prediction = await (from m in _context.MatchPredictions
-                                    where m.MatchPredictionId == matchPredictionId
-                                    select m).FirstAsync();
-            _context.MatchPredictions.Remove(prediction);
-            await _context.SaveChangesAsync();
+            const string deleteQuery = "DELETE FROM MatchPredictions WHERE MatchPredictionId = @MatchPredictionId";
+            await _dbConnection.ExecuteAsync(deleteQuery, new { MatchPredictionId = matchPredictionId });
         }
 
         public async Task<MatchPrediction> GetAsync(Guid matchPredictionId)
-            => await (from m in _context.MatchPredictions
-                      where m.MatchPredictionId == matchPredictionId
-                      select new MatchPrediction(m.MatchPredictionId, m.HomeTeamGoalPrediction, m.AwayTeamGoalPrediction,
-                          m.MatchId, m.UserId)).FirstAsync();
+        {
+            const string selectQuery = "SELECT * FROM MatchPredictions WHERE MatchPredictionId = @MatchPredictionId";
+            return await _dbConnection.QueryFirstOrDefaultAsync<MatchPrediction>(selectQuery, new { MatchPredictionId = matchPredictionId });
+        }
 
         public async Task<List<MatchPrediction>> GetByUserIdAsync(Guid userId)
-            => await (from m in _context.MatchPredictions
-                      where m.UserId == userId
-                      select new MatchPrediction(m.MatchPredictionId, m.HomeTeamGoalPrediction, m.AwayTeamGoalPrediction,
-                          m.MatchId, m.UserId)).ToListAsync();
+        {
+            const string selectQuery = "SELECT * FROM MatchPredictions WHERE UserId = @UserId";
+            return (await _dbConnection.QueryAsync<MatchPrediction>(selectQuery, new { UserId = userId })).ToList();
+        }
 
         public async Task UpdateAsync(MatchPrediction matchPrediction)
         {
-            var prediction = await (from m in _context.MatchPredictions
-                                    where m.MatchPredictionId == matchPrediction.MatchPredictionId
-                                    select m).FirstAsync();
-            prediction.HomeTeamGoalPrediction = matchPrediction.HomeTeamGoalPrediction;
-            prediction.AwayTeamGoalPrediction = matchPrediction.AwayTeamGoalPrediction;
-            await _context.SaveChangesAsync();
+            const string updateQuery = "UPDATE MatchPredictions " +
+                                       "SET HomeTeamGoalPrediction = @HomeTeamGoalPrediction, " +
+                                       "AwayTeamGoalPrediction = @AwayTeamGoalPrediction " +
+                                       "WHERE MatchPredictionId = @MatchPredictionId";
+
+            await _dbConnection.ExecuteAsync(updateQuery, new
+            {
+                HomeTeamGoalPrediction = matchPrediction.HomeTeamGoalPrediction,
+                AwayTeamGoalPrediction = matchPrediction.AwayTeamGoalPrediction,
+                MatchPredictionId = matchPrediction.MatchPredictionId
+            });
         }
 
-        public async Task UpdateManyAsync(params Tuple<Guid,int?,int?>[] matchPredictions)
+        public async Task UpdateManyAsync(params Tuple<Guid, int?, int?>[] matchPredictions)
         {
-            var predictions = (from mp in _context.MatchPredictions
-                               where matchPredictions.Select(x => x.Item1).Contains(mp.MatchPredictionId)
-                               select mp);
-            predictions.ToList().ForEach(x =>
+            const string updateQuery = "UPDATE MatchPredictions " +
+                                       "SET HomeTeamGoalPrediction = @HomeTeamGoalPrediction, " +
+                                       "AwayTeamGoalPrediction = @AwayTeamGoalPrediction " +
+                                       "WHERE MatchPredictionId = @MatchPredictionId";
+
+            foreach (var prediction in matchPredictions)
             {
-                var prediction = matchPredictions.First(y => y.Item1 == x.MatchPredictionId);
-                x.HomeTeamGoalPrediction = prediction.Item2;
-                x.AwayTeamGoalPrediction = prediction.Item3;
-            });
-            await _context.SaveChangesAsync();
+                await _dbConnection.ExecuteAsync(updateQuery, new
+                {
+                    HomeTeamGoalPrediction = prediction.Item2,
+                    AwayTeamGoalPrediction = prediction.Item3,
+                    MatchPredictionId = prediction.Item1
+                });
+            }
         }
     }
 }

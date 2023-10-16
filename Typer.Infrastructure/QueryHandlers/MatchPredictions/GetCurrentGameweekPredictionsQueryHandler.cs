@@ -1,7 +1,8 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using MediatR;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,27 +12,27 @@ namespace Typer.Infrastructure.QueryHandlers.MatchPredictions
 {
     public class GetCurrentGameweekPredictionsQueryHandler : IRequestHandler<GetCurrentGameweekPredictionsQuery, List<MatchPredictionDto>>
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _connection;
 
-        public GetCurrentGameweekPredictionsQueryHandler(TyperContext context)
+        public GetCurrentGameweekPredictionsQueryHandler(IDbConnection connection)
         {
-            _context = context;
+            _connection = connection;
         }
 
         public async Task<List<MatchPredictionDto>> Handle(GetCurrentGameweekPredictionsQuery request, CancellationToken cancellationToken)
         {
-            var matches = await (from m in _context.Matches
-                           join ht in _context.Teams on m.HomeTeamId equals ht.TeamId
-                           join at in _context.Teams on m.AwayTeamId equals at.TeamId
-                           join mp in _context.MatchPredictions.Where(x => x.UserId == request.UserId) on m.MatchId
-                           equals mp.MatchId into matchPreds
-                           from mp in matchPreds.DefaultIfEmpty()
-                           where m.MatchDate > DateTime.UtcNow && m.MatchDate < DateTime.UtcNow.AddDays(7)
-                           let matchPredictionId = mp != null ? mp.MatchPredictionId : (Guid?)null
-                           let homeTeamGoalPrediction = mp != null ? mp.HomeTeamGoalPrediction : null
-                           let awayTeamGoalPrediction = mp != null ? mp.AwayTeamGoalPrediction : null
-                           select new MatchPredictionDto(mp.MatchPredictionId, m.HomeTeamGoals, m.AwayTeamGoals, ht.TeamName,
-                           at.TeamName, homeTeamGoalPrediction, awayTeamGoalPrediction, m.MatchDate)).ToListAsync();
+            var query = @"
+                SELECT mp.MatchPredictionId, m.HomeTeamGoals, m.AwayTeamGoals, ht.TeamName AS HomeTeamName,
+                    at.TeamName AS AwayTeamName, mp.HomeTeamGoalPrediction, mp.AwayTeamGoalPrediction, m.MatchDate
+                FROM Matches AS m
+                JOIN Teams AS ht ON m.HomeTeamId = ht.TeamId
+                JOIN Teams AS at ON m.AwayTeamId = at.TeamId
+                LEFT JOIN MatchPredictions AS mp ON m.MatchId = mp.MatchId AND mp.UserId = @UserId
+                WHERE m.MatchDate > GETDATE() AND m.MatchDate < DATEADD(DAY, 7, GETDATE())";
+
+            var parameters = new { UserId = request.UserId };
+            var matches = await _connection.QueryAsync<MatchPredictionDto>(query, parameters);
+
             return matches.OrderBy(x => x.MatchDate).ToList();
         }
     }

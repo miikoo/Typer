@@ -1,69 +1,65 @@
-﻿using MediatR;
+﻿using Dapper;
+using MediatR;
+using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Data;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Typer.Application.Queries.Teams.GetTeamsStats;
-using System;
-using Microsoft.EntityFrameworkCore;
 using Typer.Infrastructure.Entities;
 
 namespace Typer.Infrastructure.QueryHandlers.Teams
 {
     public class GetTeamsStatsQueryHandler : IRequestHandler<GetTeamsStatsQuery, List<TeamStats>>
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _dbConnection;
 
-        public GetTeamsStatsQueryHandler(TyperContext context)
+        public GetTeamsStatsQueryHandler(IDbConnection dbConnection)
         {
-            _context = context;
+            _dbConnection = dbConnection;
         }
 
         public async Task<List<TeamStats>> Handle(GetTeamsStatsQuery request, CancellationToken cancellationToken)
         {
             var result = new List<TeamStats>();
 
-            var seasonId = await (from m in _context.Matches
-                                  where m.MatchDate > DateTime.UtcNow
-                                  join cg in _context.Gameweeks on m.GameweekId equals cg.GameweekId
-                                  join s in _context.Seasons on cg.SeasonId equals s.SeasonId
-                                  orderby m.MatchDate
-                                  select s.SeasonId).FirstAsync();
+            string matchesQuery = "SELECT MatchId, HomeTeamId, AwayTeamId, HomeTeamGoals, AwayTeamGoals " +
+                                  "FROM Matches " +
+                                  "WHERE MatchDate > @CurrentDate";
 
-            var matches = await (from m in _context.Matches
-                                 join g in _context.Gameweeks on seasonId equals g.SeasonId
-                                 where m.GameweekId == g.GameweekId
-                                 select m).ToListAsync();
+            string gameweekMatchesQuery = "SELECT MatchId, HomeTeamId, AwayTeamId, HomeTeamGoals, AwayTeamGoals " +
+                                         "FROM Matches " +
+                                         "WHERE GameweekId = @GameweekId";
 
-            var GameweekMatches = await (from m in _context.Matches
-                                         join g in _context.Gameweeks on seasonId equals g.SeasonId
-                                         where g.GameweekId == m.GameweekId && g.GameweekNumber == 3
-                                         select m).ToListAsync();
+            string allTeamsQuery = "SELECT TeamId, TeamName FROM Teams";
 
-            var allTeams = await (from t in _context.Teams select t).ToListAsync();
-            List<DbTeam> teams = new List<DbTeam>();
-            foreach (var team in allTeams)
-                if (GameweekMatches.Where(x => x.HomeTeamId == team.TeamId || x.AwayTeamId == team.TeamId).Any())
-                    teams.Add(team);
+            // Execute queries and retrieve data
+            var matches = await _dbConnection.QueryAsync<DbMatch>(matchesQuery, new { CurrentDate = DateTime.UtcNow });
+            var gameweekMatches = await _dbConnection.QueryAsync<DbMatch>(gameweekMatchesQuery, new { GameweekId = 3 }); // You may need to change this value.
+            var allTeams = await _dbConnection.QueryAsync<DbTeam>(allTeamsQuery);
 
+            var teams = allTeams.Where(team =>
+                gameweekMatches.Any(m => m.HomeTeamId == team.TeamId || m.AwayTeamId == team.TeamId)
+            );
 
             foreach (var team in teams)
             {
-                var mh =  (from m in matches where team.TeamId == m.HomeTeamId select m).ToList();
-                var ma = (from m in matches where team.TeamId == m.AwayTeamId select m).ToList();
+                var mh = matches.Where(m => m.HomeTeamId == team.TeamId).ToList();
+                var ma = matches.Where(m => m.AwayTeamId == team.TeamId).ToList();
 
-                var scoredGoals = (from m in mh select m.HomeTeamGoals).Sum() + (from m in ma select m.AwayTeamGoals).Sum();
-                var concededGoals = (from m in mh select m.AwayTeamGoals).Sum() + (from m in ma select m.HomeTeamGoals).Sum();
+                var scoredGoals = mh.Sum(m => m.HomeTeamGoals ?? 0) + ma.Sum(m => m.AwayTeamGoals ?? 0);
+                var concededGoals = mh.Sum(m => m.AwayTeamGoals ?? 0) + ma.Sum(m => m.HomeTeamGoals ?? 0);
 
-                var winsAH = (from m in mh where m.HomeTeamGoals > m.AwayTeamGoals select m).Count();
-                var winsAA = (from m in ma where m.AwayTeamGoals > m.HomeTeamGoals select m).Count();
+                var winsAH = mh.Count(m => m.HomeTeamGoals > m.AwayTeamGoals);
+                var winsAA = ma.Count(m => m.AwayTeamGoals > m.HomeTeamGoals);
                 var wins = winsAA + winsAH;
 
-                var draws = (from m in mh.Concat(ma) where m.HomeTeamGoals == m.AwayTeamGoals && m.HomeTeamGoals != null select m).Count();
+                var draws = mh.Concat(ma).Count(m => m.HomeTeamGoals == m.AwayTeamGoals && m.HomeTeamGoals != null);
 
-                var losses = mh.Count() + ma.Count() - wins - draws - (from m in mh.Concat(ma) where m.HomeTeamGoals == null select m).Count();
+                var losses = mh.Count() + ma.Count() - wins - draws - mh.Concat(ma).Count(m => m.HomeTeamGoals == null);
 
-                result.Add(new TeamStats(team.TeamId, team.TeamName, scoredGoals, concededGoals, wins*3+draws, wins, draws, losses));
+                result.Add(new TeamStats(team.TeamId, team.TeamName, scoredGoals, concededGoals, wins * 3 + draws, wins, draws, losses));
             }
 
             return result.OrderByDescending(x => x.Points).ThenByDescending(x => x.ScoredGoals - x.ConcededGoals)

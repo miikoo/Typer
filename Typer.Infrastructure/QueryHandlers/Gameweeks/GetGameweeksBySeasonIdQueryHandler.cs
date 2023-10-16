@@ -1,30 +1,33 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dapper;
+using MediatR;
 using Typer.Application.Queries.Gameweeks.GetGameweeksBySeasonId;
 
 namespace Typer.Infrastructure.QueryHandlers.Gameweeks
 {
     public class GetGameweeksBySeasonIdQueryHandler : IRequestHandler<GetGameweeksBySeasonIdQuery, List<GameweekDto>>
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _dbConnection;
 
-        public GetGameweeksBySeasonIdQueryHandler(TyperContext context)
+        public GetGameweeksBySeasonIdQueryHandler(IDbConnection dbConnection)
         {
-            _context = context;
+            _dbConnection = dbConnection;
         }
 
         public async Task<List<GameweekDto>> Handle(GetGameweeksBySeasonIdQuery request, CancellationToken cancellationToken)
         {
-            var gameweeks = await (from g in _context.Gameweeks
-                   where g.SeasonId == request.SeasonId
-                   select new GameweekDto(g.GameweekId, g.GameweekNumber))
-              .ToListAsync();
-            return gameweeks?.OrderBy(x => x.GameweekNumber).ToList();
+            const string query = @"
+                SELECT GameweekId, GameweekNumber
+                FROM Gameweeks
+                WHERE SeasonId = @SeasonId
+                ORDER BY GameweekNumber
+            ";
+
+            return (await _dbConnection.QueryAsync<GameweekDto>(query, new { SeasonId = request.SeasonId })).ToList();
         }
     }
 }

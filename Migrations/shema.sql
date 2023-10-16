@@ -1,0 +1,44 @@
+CREATE TABLE Users (
+    UserId UNIQUEIDENTIFIER PRIMARY KEY,
+    Username NVARCHAR(255),
+    Email NVARCHAR(255),
+    Password NVARCHAR(255),
+    Role INT,
+    Salt NVARCHAR(255)
+);
+
+CREATE TABLE Teams (
+    TeamId UNIQUEIDENTIFIER PRIMARY KEY,
+    TeamName NVARCHAR(255)
+);
+
+CREATE TABLE Seasons (
+    SeasonId UNIQUEIDENTIFIER PRIMARY KEY,
+    StartYear INT,
+    EndYear INT
+);
+
+CREATE TABLE Gameweeks (
+    GameweekId UNIQUEIDENTIFIER PRIMARY KEY,
+    GameweekNumber INT,
+    ExternalId BIGINT,
+    SeasonId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Seasons(SeasonId)
+);
+
+CREATE TABLE Matches (
+    MatchId UNIQUEIDENTIFIER PRIMARY KEY,
+    HomeTeamGoals INT,
+    AwayTeamGoals INT,
+    MatchDate DATETIME,
+    HomeTeamId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Teams(TeamId),
+    AwayTeamId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Teams(TeamId),
+    GameweekId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Gameweeks(GameweekId)
+);
+
+CREATE TABLE MatchPredictions (
+    MatchPredictionId UNIQUEIDENTIFIER PRIMARY KEY,
+    HomeTeamGoalPrediction INT,
+    AwayTeamGoalPrediction INT,
+    UserId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Users(UserId),
+    MatchId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Matches(MatchId)
+);

@@ -9,19 +9,15 @@ namespace Typer.Infrastructure.Entities
     {
         public DbGameweek()
         {
-            Matches = new HashSet<DbMatch>();
         }
 
         public Guid GameweekId { get; set; }
         public int GameweekNumber { get; set; }
-
-        public long ExternalId { get; set; }
+        
         public Guid SeasonId { get; set; }
-        public virtual DbSeason Season { get; set; }
-        public virtual ICollection<DbMatch> Matches { get; set; }
 
         public static DbGameweek Create(Gameweek gameweek)
-            => new DbGameweek
+            => new()
             {
                 SeasonId = gameweek.SeasonId,
                 GameweekNumber = gameweek.GameweekNumber,

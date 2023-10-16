@@ -8,21 +8,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MySql.Data.MySqlClient;
 using Swashbuckle.AspNetCore.Filters;
+using System.Data;
 using System.Text;
 using Typer.Application.Commands.Gameweeks.CreateGameweek;
 using Typer.Application.Commands.Seasons.CreateSeason;
 using Typer.Application.Services.JwtGenerator;
 using Typer.Application.Services.PasswordHasher;
 using Typer.Domain.Interfaces.Repositories;
-using Typer.Infrastructure;
 using Typer.Infrastructure.QueryHandlers.Seasons;
 using Typer.Infrastructure.Repositories;
-using RestEase;
-using System;
-using Typer.Application.Client.PLClient;
-using Typer.Domain.Interfaces.Services;
-using Typer.Infrastructure.PLClientSevice;
 
 namespace Typer.API
 {
@@ -40,8 +36,8 @@ namespace Typer.API
         {
             services.AddCors();
             var _connectionString = Configuration.GetConnectionString("TyperConnectionString");
-            services.AddDbContext<TyperContext>(options =>
-            options.UseMySql(_connectionString, ServerVersion.AutoDetect(_connectionString)));
+            services.AddTransient<IDbConnection>(_ => new MySqlConnection(_connectionString));
+
             var key = Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings").GetSection("Secret").Value);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -62,7 +58,6 @@ namespace Typer.API
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateGameweekCommandValidator>());
             services.AddMediatR(typeof(GetSeasonsQueryHandler), typeof(CreateSeasonCommandHandler));
             services.AddScoped<IMediator, Mediator>();
-            services.AddTransient<IPLClientService, PLClientService>();
             services.AddTransient<IJwtGenerator, JwtGenerator>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ISeasonRepository, SeasonRepository>();
@@ -71,11 +66,9 @@ namespace Typer.API
             services.AddTransient<ITeamRepository, TeamRepository>();
             services.AddTransient<IMatchPredictionRepository, MatchPredictionRepository>();
             services.AddTransient<IPasswordHasher, PasswordHasher>();
-            services.AddTransient(x => RestClient.For<IPLClient>
-            ("https://heisenbug-premier-league-live-scores-v1.p.rapidapi.com/api/premierleague/"));
             services.ConfigureSwaggerGen(options => { options.CustomSchemaIds(x => x.FullName); });
-            services.AddSwaggerGen(c => 
-            { 
+            services.AddSwaggerGen(c =>
+            {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Typer API", Version = "v1" });
 
                 c.AddSecurityDefinition("oauth2", new ApiKeyScheme
@@ -94,8 +87,8 @@ namespace Typer.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-          //  if (env.IsDevelopment())
-               // app.UseHsts();
+            //  if (env.IsDevelopment())
+            // app.UseHsts();
 
             //app.UseHttpsRedirection();
             app.UseCors(x => x

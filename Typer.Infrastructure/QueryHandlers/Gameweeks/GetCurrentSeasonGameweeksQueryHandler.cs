@@ -1,37 +1,46 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dapper;
+using MediatR;
 using Typer.Application.Queries.Gameweeks.GetCurrentSeasonGameweeks;
 
 namespace Typer.Infrastructure.QueryHandlers.Gameweeks
 {
     public class GetCurrentSeasonGameweeksQueryHandler : IRequestHandler<GetCurrentSeasonGameweeksQuery, List<GameweekDto>>
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _dbConnection;
 
-        public GetCurrentSeasonGameweeksQueryHandler(TyperContext context)
+        public GetCurrentSeasonGameweeksQueryHandler(IDbConnection dbConnection)
         {
-            _context = context;
+            _dbConnection = dbConnection;
         }
 
         public async Task<List<GameweekDto>> Handle(GetCurrentSeasonGameweeksQuery request, CancellationToken cancellationToken)
         {
-            var seasonId = await (from m in _context.Matches
-                                  where m.MatchDate > DateTime.UtcNow
-                                  join cg in _context.Gameweeks on m.GameweekId equals cg.GameweekId
-                                  join s in _context.Seasons on cg.SeasonId equals s.SeasonId
-                                  orderby m.MatchDate
-                                  select s.SeasonId).FirstAsync();
+            const string currentSeasonQuery = @"
+                SELECT s.SeasonId
+                FROM Matches m
+                JOIN Gameweeks g ON m.GameweekId = g.GameweekId
+                JOIN Seasons s ON g.SeasonId = s.SeasonId
+                WHERE m.MatchDate > @CurrentDate
+                ORDER BY m.MatchDate
+                LIMIT 1
+            ";
 
-            return (from g in _context.Gameweeks
-                             where g.SeasonId == seasonId
-                             select new GameweekDto(g.GameweekId, g.GameweekNumber)).ToList()
-                          .OrderBy(x => x.GameweekNumber).ToList();
+            var seasonId = await _dbConnection.QueryFirstOrDefaultAsync<Guid>(currentSeasonQuery, new { CurrentDate = DateTime.UtcNow });
+            
+            const string gameweeksQuery = @"
+                SELECT g.GameweekId, g.GameweekNumber
+                FROM Gameweeks g
+                WHERE g.SeasonId = @SeasonId
+                ORDER BY g.GameweekNumber
+            ";
+
+            return (await _dbConnection.QueryAsync<GameweekDto>(gameweeksQuery, new { SeasonId = seasonId })).ToList();
         }
-
     }
 }

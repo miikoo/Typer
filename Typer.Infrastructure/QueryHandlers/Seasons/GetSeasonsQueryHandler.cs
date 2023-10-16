@@ -1,26 +1,30 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using MediatR;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Typer.API.Queries.Seasons.GetSeasonQuery;
-using Typer.Application.Client.PLClient;
 
 namespace Typer.Infrastructure.QueryHandlers.Seasons
 {
     public class GetSeasonsQueryHandler : IRequestHandler<GetSeasonsQuery, List<SeasonDto>>
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _dbConnection;
 
-        public GetSeasonsQueryHandler(TyperContext context)
+        public GetSeasonsQueryHandler(IDbConnection dbConnection)
         {
-            _context = context;
+            _dbConnection = dbConnection;
         }
 
         public async Task<List<SeasonDto>> Handle(GetSeasonsQuery request, CancellationToken cancellationToken)
-            => await (from s in _context.Seasons
-                    select new SeasonDto(s.SeasonId, s.StartYear, s.EndYear))
-            .ToListAsync();
+        {
+            string sql = "SELECT SeasonId, StartYear, EndYear FROM Seasons";
+
+            var result = await _dbConnection.QueryAsync<SeasonDto>(sql);
+
+            return result.AsList();
+        }
     }
 }

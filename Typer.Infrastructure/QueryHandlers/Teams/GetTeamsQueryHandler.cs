@@ -1,7 +1,7 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using MediatR;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Typer.Application.Queries.Teams.GetTeamsQuery;
@@ -10,16 +10,19 @@ namespace Typer.Infrastructure.QueryHandlers.Teams
 {
     public class GetTeamsQueryHandler : IRequestHandler<GetTeamsQuery, List<TeamDto>>
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _dbConnection;
 
-        public GetTeamsQueryHandler(TyperContext context)
+        public GetTeamsQueryHandler(IDbConnection dbConnection)
         {
-            _context = context;
+            _dbConnection = dbConnection;
         }
 
         public async Task<List<TeamDto>> Handle(GetTeamsQuery request, CancellationToken cancellationToken)
-            => await(from t in _context.Teams
-                     select new TeamDto(t.TeamId, t.TeamName))
-                     .ToListAsync();
+        {
+            string sql = "SELECT TeamId, TeamName FROM Teams";
+
+            var teams = await _dbConnection.QueryAsync<TeamDto>(sql);
+            return teams.AsList();
+        }
     }
 }

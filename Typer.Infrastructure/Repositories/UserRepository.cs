@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Typer.Application.Services.JwtGenerator;
 using Typer.Domain.Enums;
 using Typer.Domain.Interfaces.Repositories;
@@ -12,49 +13,49 @@ namespace Typer.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly TyperContext _context;
+        private readonly IDbConnection _dbConnection;
+        private readonly IJwtGenerator _jwtGenerator;
 
-        public UserRepository(TyperContext context, IJwtGenerator jwtGenerator)
+        public UserRepository(IDbConnection dbConnection, IJwtGenerator jwtGenerator)
         {
-            _context = context;
+            _dbConnection = dbConnection;
+            _jwtGenerator = jwtGenerator;
         }
 
         public async Task CreateAsync(User user)
         {
-            await _context.Users.AddAsync(DbUser.Create(user));
-            await _context.SaveChangesAsync();
+            const string insertQuery = "INSERT INTO Users (UserId, Username, Email, Role, Password, Salt) VALUES (@UserId, @Username, @Email, @Role, @Password, @Salt)";
+            await _dbConnection.ExecuteAsync(insertQuery, DbUser.Create(user));
         }
 
         public async Task DeleteAsync(Guid userId)
         {
-            var user = await (from u in _context.Users where u.UserId == userId select u).FirstAsync();
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            const string deleteQuery = "DELETE FROM Users WHERE UserId = @UserId";
+            await _dbConnection.ExecuteAsync(deleteQuery, new { UserId = userId });
         }
 
         public async Task<User> GetAsync(Guid userId)
-            => await (from u in _context.Users
-                      where u.UserId == userId
-                      select new User(u.UserId, u.Username, u.Email, u.Role, u.Password, u.Salt)).FirstAsync();
+        {
+            const string selectQuery = "SELECT UserId, Username, Email, Role, Password, Salt FROM Users WHERE UserId = @UserId";
+            return await _dbConnection.QueryFirstOrDefaultAsync<User>(selectQuery, new { UserId = userId });
+        }
 
         public async Task<User> GetUserByUsername(string username)
-            => await (from u in _context.Users
-                     where u.Username == username
-                     select new User(u.UserId, u.Username, u.Email, u.Role, u.Password, u.Salt)).FirstOrDefaultAsync();
+        {
+            const string selectQuery = "SELECT UserId, Username, Email, Role, Password, Salt FROM Users WHERE Username = @Username";
+            return await _dbConnection.QueryFirstOrDefaultAsync<User>(selectQuery, new { Username = username });
+        }
 
         public async Task<User> GetUserByEmail(string email)
-            => await (from u in _context.Users
-                      where u.Email == email
-                      select new User(u.UserId, u.Username, u.Email, u.Role, u.Password, u.Salt)).FirstOrDefaultAsync();
+        {
+            const string selectQuery = "SELECT UserId, Username, Email, Role, Password, Salt FROM Users WHERE Email = @Email";
+            return await _dbConnection.QueryFirstOrDefaultAsync<User>(selectQuery, new { Email = email });
+        }
 
         public async Task UpdateAsync(User user)
         {
-            var _user = await (from u in _context.Users where u.UserId == user.UserId select u).FirstAsync();
-            _user.Username = user.Username;
-            _user.Email = user.Email;
-            _user.Password = user.Password;
-            _user.Role = user.Role;
-            await _context.SaveChangesAsync();
+            const string updateQuery = "UPDATE Users SET Username = @Username, Email = @Email, Password = @Password, Role = @Role WHERE UserId = @UserId";
+            await _dbConnection.ExecuteAsync(updateQuery, user);
         }
     }
 }
