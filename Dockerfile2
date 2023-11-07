@@ -1,22 +1,21 @@
-# Use the official ASP.NET Core runtime as a parent image
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-# Use the official ASP.NET Core SDK as a parent image for building
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-COPY ["Typer.API/Typer.API.csproj", "Typer.API/"]
-RUN dotnet restore "Typer.API/Typer.API.csproj"
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+RUN dotnet dev-certs https
+WORKDIR /
 COPY . .
-WORKDIR "/Typer.API"
-RUN dotnet build "Typer.API.csproj" -c Release -o /app/build
+RUN dotnet restore "Typer.API/Typer.API.csproj" \
+&& dotnet publish "Typer.API/Typer.API.csproj" -c Release -o /app/build
+
 
 FROM build AS publish
-RUN dotnet publish "Typer.API.csproj" -c Release -o /app/publish
+RUN dotnet publish "Typer.API/Typer.API.csproj" -c Release -o /app/publish
 
-# Final image
 FROM base AS final
 WORKDIR /app
+COPY --from=publish /root/.dotnet/corefx/cryptography/x509stores/my/* /root/.dotnet/corefx/cryptography/x509stores/my/
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "YourApiProject.dll"]
+ENTRYPOINT ["dotnet", "Typer.API.dll"]
