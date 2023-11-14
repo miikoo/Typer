@@ -10,7 +10,7 @@ resources:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '0b01144e-d00b-4a49-833b-d24d04e5ec1a'
+  dockerRegistryServiceConnection: 'Typer Container'
   imageRepository: 'typer'
   containerRegistry: 'typer.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile2'
