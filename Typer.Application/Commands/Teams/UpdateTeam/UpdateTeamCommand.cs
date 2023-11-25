@@ -8,7 +8,7 @@ namespace Typer.Application.Commands.Teams.UpdateTeam
 {
     public class UpdateTeamCommand : IRequest<Unit>
     {
-        public Guid TeamId { get; set; }
+        public string TeamId { get; set; }
         public string TeamName { get; set; }
     }
 }

@@ -28,19 +28,19 @@ namespace Typer.Infrastructure.Repositories
             await _dbConnection.ExecuteAsync(insertQuery, matchPredictions);
         }
 
-        public async Task DeleteAsync(Guid matchPredictionId)
+        public async Task DeleteAsync(string matchPredictionId)
         {
             const string deleteQuery = "DELETE FROM MatchPredictions WHERE MatchPredictionId = @MatchPredictionId";
             await _dbConnection.ExecuteAsync(deleteQuery, new { MatchPredictionId = matchPredictionId });
         }
 
-        public async Task<MatchPrediction> GetAsync(Guid matchPredictionId)
+        public async Task<MatchPrediction> GetAsync(string matchPredictionId)
         {
             const string selectQuery = "SELECT * FROM MatchPredictions WHERE MatchPredictionId = @MatchPredictionId";
             return await _dbConnection.QueryFirstOrDefaultAsync<MatchPrediction>(selectQuery, new { MatchPredictionId = matchPredictionId });
         }
 
-        public async Task<List<MatchPrediction>> GetByUserIdAsync(Guid userId)
+        public async Task<List<MatchPrediction>> GetByUserIdAsync(string userId)
         {
             const string selectQuery = "SELECT * FROM MatchPredictions WHERE UserId = @UserId";
             return (await _dbConnection.QueryAsync<MatchPrediction>(selectQuery, new { UserId = userId })).ToList();
@@ -61,7 +61,7 @@ namespace Typer.Infrastructure.Repositories
             });
         }
 
-        public async Task UpdateManyAsync(params Tuple<Guid, int?, int?>[] matchPredictions)
+        public async Task UpdateManyAsync(params Tuple<string, int?, int?>[] matchPredictions)
         {
             const string updateQuery = "UPDATE MatchPredictions " +
                                        "SET HomeTeamGoalPrediction = @HomeTeamGoalPrediction, " +

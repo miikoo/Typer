@@ -24,13 +24,13 @@ namespace Typer.Infrastructure.Repositories
             await _dbConnection.ExecuteAsync(insertQuery, DbSeason.Create(season));
         }
 
-        public async Task DeleteAsync(Guid seasonId)
+        public async Task DeleteAsync(string seasonId)
         {
             const string deleteQuery = "DELETE FROM Seasons WHERE SeasonId = @SeasonId";
             await _dbConnection.ExecuteAsync(deleteQuery, new { SeasonId = seasonId });
         }
 
-        public async Task<Season> GetAsync(Guid seasonId)
+        public async Task<Season> GetAsync(string seasonId)
         {
             const string selectQuery = "SELECT * FROM Seasons WHERE SeasonId = @SeasonId";
             return await _dbConnection.QueryFirstOrDefaultAsync<Season>(selectQuery, new { SeasonId = seasonId });

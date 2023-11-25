@@ -6,8 +6,8 @@ namespace Typer.Domain.Models
 {
     public class MatchPrediction
     {
-        public MatchPrediction(Guid matchPredictionId, int? homeTeamGoalPredictions, int? awayTeamGoalPredictions,
-            Guid matchId, Guid userId)
+        public MatchPrediction(string matchPredictionId, int? homeTeamGoalPredictions, int? awayTeamGoalPredictions,
+            string matchId, string userId)
         {
             MatchPredictionId = matchPredictionId;
             HomeTeamGoalPrediction = homeTeamGoalPredictions;
@@ -16,13 +16,18 @@ namespace Typer.Domain.Models
             UserId = userId;
         }
 
-        public Guid MatchPredictionId { get; set; }
+        public MatchPrediction()
+        {
+            
+        }
+
+        public string MatchPredictionId { get; set; }
         public int? HomeTeamGoalPrediction { get; set; }
         public int? AwayTeamGoalPrediction { get; set; }
-        public Guid MatchId { get; set; }
-        public Guid UserId { get; set; }
+        public string MatchId { get; set; }
+        public string UserId { get; set; }
 
-        public static MatchPrediction Create(int? homeTeamGoalPredictions, int? awayTeamGoalPredictions, Guid matchId, Guid userId)
-            => new MatchPrediction(Guid.NewGuid(), homeTeamGoalPredictions, awayTeamGoalPredictions, matchId, userId);
+        public static MatchPrediction Create(int? homeTeamGoalPredictions, int? awayTeamGoalPredictions, string matchId, string userId)
+            => new MatchPrediction(Guid.NewGuid().ToString(), homeTeamGoalPredictions, awayTeamGoalPredictions, matchId, userId);
     }
 }

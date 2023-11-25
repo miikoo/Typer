@@ -9,6 +9,6 @@ namespace Typer.Application.Commands.Gameweeks.CreateGameweek
     public class CreateGameweekCommand : IRequest<GameweekDto>
     {
         public int GameweekNumber { get; set; }
-        public Guid SeasonId { get; set; }
+        public string SeasonId { get; set; }
     }
 }

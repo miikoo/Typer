@@ -6,13 +6,17 @@ namespace Typer.Application.Commands.Users.CreateUser
 {
     public class UserDto
     {
-        public UserDto(string token, Guid userId)
+        public UserDto()
+        {
+            
+        }
+        public UserDto(string token, string userId)
         {
             Token = token;
             UserId = userId;
         }
 
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public string Token { get; set; }
     }
 }

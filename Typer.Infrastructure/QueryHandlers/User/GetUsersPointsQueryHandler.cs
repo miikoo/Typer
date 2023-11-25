@@ -21,8 +21,8 @@ namespace Typer.Infrastructure.QueryHandlers.User
 
         public async Task<List<UserPointsDto>> Handle(GetUsersPointsQuery request, CancellationToken cancellationToken)
         {
-            var seasonId = await _dbConnection.ExecuteScalarAsync<Guid>(
-                "SELECT TOP 1 s.SeasonId " +
+            var seasonId = await _dbConnection.QueryFirstOrDefaultAsync<string>(
+                "SELECT s.SeasonId " +
                 "FROM Matches m " +
                 "INNER JOIN Gameweeks g ON m.GameweekId = g.GameweekId " +
                 "INNER JOIN Seasons s ON g.SeasonId = s.SeasonId " +
@@ -36,25 +36,28 @@ namespace Typer.Infrastructure.QueryHandlers.User
 
             foreach (var user in users)
             {
-                var exactPredictions = await _dbConnection.ExecuteScalarAsync<int>(
-                    "SELECT COUNT(mp.MatchId) " +
-                    "FROM MatchPredictions mp " +
-                    "INNER JOIN Matches m ON mp.MatchId = m.MatchId " +
-                    "INNER JOIN Seasons s ON m.SeasonId = s.SeasonId " +
-                    "WHERE mp.UserId = @UserId " +
-                    "AND s.SeasonId = @SeasonId " +
-                    "AND m.HomeTeamGoals IS NOT NULL " +
-                    "AND mp.AwayTeamGoalPrediction IS NOT NULL " +
-                    "AND mp.HomeTeamGoalPrediction IS NOT NULL " +
-                    "AND mp.HomeTeamGoalPrediction = m.HomeTeamGoals " +
-                    "AND mp.AwayTeamGoalPrediction = m.AwayTeamGoals",
+                var sql = "SELECT COUNT(mp.MatchId) " +
+                          "FROM MatchPredictions mp " +
+                          "INNER JOIN Matches m ON mp.MatchId = m.MatchId " +
+                          "inner join Gameweeks g on g.gameweekId = m.GameweekId " +
+                          "INNER JOIN Seasons s ON g.SeasonId = s.SeasonId " +
+                          "WHERE mp.UserId = @UserId " +
+                          "AND s.SeasonId = @SeasonId " +
+                          "AND m.HomeTeamGoals IS NOT NULL " +
+                          "AND mp.AwayTeamGoalPrediction IS NOT NULL " +
+                          "AND mp.HomeTeamGoalPrediction IS NOT NULL " +
+                          "AND mp.HomeTeamGoalPrediction = m.HomeTeamGoals " +
+                          "AND mp.AwayTeamGoalPrediction = m.AwayTeamGoals";
+
+                var exactPredictions = await _dbConnection.ExecuteScalarAsync<int>(sql,
                     new { UserId = user.UserId, SeasonId = seasonId });
 
                 var winnerPredictions = await _dbConnection.ExecuteScalarAsync<int>(
                     "SELECT COUNT(mp.MatchId) - @ExactPredictions " +
                     "FROM MatchPredictions mp " +
                     "INNER JOIN Matches m ON mp.MatchId = m.MatchId " +
-                    "INNER JOIN Seasons s ON m.SeasonId = s.SeasonId " +
+                    "inner join Gameweeks g on g.gameweekId = m.GameweekId " +
+                    "INNER JOIN Seasons s ON g.SeasonId = s.SeasonId " +
                     "WHERE mp.UserId = @UserId " +
                     "AND s.SeasonId = @SeasonId " +
                     "AND m.HomeTeamGoals IS NOT NULL " +
@@ -72,7 +75,8 @@ namespace Typer.Infrastructure.QueryHandlers.User
                     "SELECT COUNT(mp.MatchId) - @ExactPredictions - @WinnerPredictions " +
                     "FROM MatchPredictions mp " +
                     "INNER JOIN Matches m ON mp.MatchId = m.MatchId " +
-                    "INNER JOIN Seasons s ON m.SeasonId = s.SeasonId " +
+                    "inner join Gameweeks g on g.gameweekId = m.GameweekId " +
+                    "INNER JOIN Seasons s ON g.SeasonId = s.SeasonId " +
                     "WHERE mp.UserId = @UserId " +
                     "AND s.SeasonId = @SeasonId " +
                     "AND m.HomeTeamGoals IS NOT NULL " +

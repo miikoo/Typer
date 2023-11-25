@@ -6,7 +6,11 @@ namespace Typer.Application.Queries.MatchPredictions.GetCurrentGameweekPredictio
 {
     public class MatchPredictionDto
     {
-        public MatchPredictionDto(Guid? matchPredictionId, int? homeTeamGoals, int? awayTeamGoals, string homeTeamName,
+        public MatchPredictionDto()
+        {
+            
+        }
+        public MatchPredictionDto(string? matchPredictionId, int? homeTeamGoals, int? awayTeamGoals, string homeTeamName,
             string awayTeamName, int? homeTeamGoalsPrediction, int? awayTeamGoalsPrediction, DateTime matchDate)
         {
             MatchPredictionId = matchPredictionId;
@@ -19,7 +23,7 @@ namespace Typer.Application.Queries.MatchPredictions.GetCurrentGameweekPredictio
             MatchDate = matchDate;
         }
 
-        public Guid? MatchPredictionId { get; set; }
+        public string? MatchPredictionId { get; set; }
         public string HomeTeamName { get; set; }
         public string AwayTeamName { get; set; }
         public int? HomeTeamGoals { get; set; }

@@ -11,10 +11,10 @@ namespace Typer.Infrastructure.Entities
         {
         }
 
-        public Guid GameweekId { get; set; }
+        public string GameweekId { get; set; }
         public int GameweekNumber { get; set; }
         
-        public Guid SeasonId { get; set; }
+        public string SeasonId { get; set; }
 
         public static DbGameweek Create(Gameweek gameweek)
             => new()

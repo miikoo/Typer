@@ -7,6 +7,6 @@ namespace Typer.Application.Services.JwtGenerator
 {
     public interface IJwtGenerator
     {
-        string Generate(Guid userId, Roles role);
+        string Generate(string userId, Roles role);
     }
 }

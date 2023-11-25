@@ -8,9 +8,9 @@ namespace Typer.Domain.Interfaces.Repositories
     public interface IGameweekRepository
     {
         Task CreateAsync(params Gameweek[] gameweeks);
-        Task<List<Gameweek>> GetAsync(Guid seasonId);
-        Task<Gameweek> GetByIdAsync(Guid gameweekId);
+        Task<List<Gameweek>> GetAsync(string seasonId);
+        Task<Gameweek> GetByIdAsync(string gameweekId);
         Task UpdateAsync(Gameweek gameweek);
-        Task DeleteAsync(Guid gameweekId);
+        Task DeleteAsync(string gameweekId);
     }
 }

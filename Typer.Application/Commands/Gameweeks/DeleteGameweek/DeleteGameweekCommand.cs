@@ -8,6 +8,6 @@ namespace Typer.Application.Commands.Gameweeks.DeleteGameweek
 {
     public class DeleteGameweekCommand : IRequest<Unit>
     {
-        public Guid GameweekId { get; set; }
+        public string GameweekId { get; set; }
     }
 }

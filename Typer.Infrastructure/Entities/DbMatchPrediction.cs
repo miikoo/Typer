@@ -7,12 +7,12 @@ namespace Typer.Infrastructure.Entities
 {
     public class DbMatchPrediction
     {
-        public Guid MatchPredictionId { get; set; }
+        public string MatchPredictionId { get; set; }
         public int? HomeTeamGoalPrediction { get; set; }
         public int? AwayTeamGoalPrediction { get; set; }
 
-        public Guid UserId { get; set; }
-        public Guid MatchId { get; set; }
+        public string UserId { get; set; }
+        public string MatchId { get; set; }
 
         public static DbMatchPrediction Create(MatchPrediction matchPrediction)
             => new()

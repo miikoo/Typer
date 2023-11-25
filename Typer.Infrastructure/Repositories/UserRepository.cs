@@ -1,10 +1,9 @@
-﻿using System;
+﻿
+using System;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Typer.Application.Services.JwtGenerator;
-using Typer.Domain.Enums;
 using Typer.Domain.Interfaces.Repositories;
 using Typer.Domain.Models;
 using Typer.Infrastructure.Entities;
@@ -28,13 +27,13 @@ namespace Typer.Infrastructure.Repositories
             await _dbConnection.ExecuteAsync(insertQuery, DbUser.Create(user));
         }
 
-        public async Task DeleteAsync(Guid userId)
+        public async Task DeleteAsync(string userId)
         {
             const string deleteQuery = "DELETE FROM Users WHERE UserId = @UserId";
             await _dbConnection.ExecuteAsync(deleteQuery, new { UserId = userId });
         }
 
-        public async Task<User> GetAsync(Guid userId)
+        public async Task<User> GetAsync(string userId)
         {
             const string selectQuery = "SELECT UserId, Username, Email, Role, Password, Salt FROM Users WHERE UserId = @UserId";
             return await _dbConnection.QueryFirstOrDefaultAsync<User>(selectQuery, new { UserId = userId });

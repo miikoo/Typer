@@ -6,11 +6,15 @@ namespace Typer.Application.Commands.Seasons.CreateSeason
 {
     public class SeasonDto
     {
-        public SeasonDto(Guid seasonId)
+        public SeasonDto()
+        {
+            
+        }
+        public SeasonDto(string seasonId)
         {
             SeasonId = seasonId;
         }
 
-        public Guid SeasonId { get; set; }
+        public string SeasonId { get; set; }
     }
 }

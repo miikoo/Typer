@@ -9,9 +9,9 @@ namespace Typer.Domain.Interfaces.Repositories
     {
         Task CreateAsync(params Team[] teams);
         Task<List<Team>> GetAsync();
-        Task<Team> GetAsync(Guid teamId);
+        Task<Team> GetAsync(string teamId);
         Task UpdateAsync(Team team);
-        Task DeleteAsync(Guid teamId);
+        Task DeleteAsync(string teamId);
         Task<Team> GetByName(string name);
     }
 }

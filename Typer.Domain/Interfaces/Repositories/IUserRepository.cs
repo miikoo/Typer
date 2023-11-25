@@ -8,9 +8,9 @@ namespace Typer.Domain.Interfaces.Repositories
     public interface IUserRepository
     {
         Task CreateAsync(User user);
-        Task<User> GetAsync(Guid userId);
+        Task<User> GetAsync(string userId);
         Task UpdateAsync(User user);
-        Task DeleteAsync(Guid userid);
+        Task DeleteAsync(string userid);
         Task<User> GetUserByUsername(string username);
         Task<User> GetUserByEmail(string email);
     }

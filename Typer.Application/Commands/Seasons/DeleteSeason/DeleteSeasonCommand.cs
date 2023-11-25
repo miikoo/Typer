@@ -8,6 +8,6 @@ namespace Typer.Application.Commands.Seasons.DeleteSeason
 {
     public class DeleteSeasonCommand : IRequest<Unit>
     {
-        public Guid SeasonId { get; set; }
+        public string SeasonId { get; set; }
     }
 }

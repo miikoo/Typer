@@ -6,11 +6,15 @@ namespace Typer.Application.Commands.Teams.CreateTeam
 {
     public class TeamDto
     {
-        public TeamDto(Guid teamId)
+        public TeamDto()
+        {
+            
+        }
+        public TeamDto(string teamId)
         {
             TeamId = teamId;
         }
 
-        public Guid TeamId { get; set; }
+        public string TeamId { get; set; }
     }
 }

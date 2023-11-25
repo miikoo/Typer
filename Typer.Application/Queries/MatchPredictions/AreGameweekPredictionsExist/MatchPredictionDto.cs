@@ -6,6 +6,10 @@ namespace Typer.Application.Queries.MatchPredictions.AreGameweekPredictionsExist
 {
     public class MatchPredictionDto
     {
+        public MatchPredictionDto()
+        {
+            
+        }
         public MatchPredictionDto(bool areExist)
         {
             AreExist = areExist;

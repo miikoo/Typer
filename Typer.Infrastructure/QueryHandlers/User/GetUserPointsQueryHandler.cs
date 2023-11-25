@@ -19,13 +19,14 @@ namespace Typer.Infrastructure.QueryHandlers.User
 
         public async Task<UserPointsDto> Handle(GetUserPointsQuery request, CancellationToken cancellationToken)
         {
-            var seasonId = await _dbConnection.ExecuteScalarAsync<Guid>(
-                "SELECT TOP 1 s.SeasonId " +
+            var sql = "SELECT s.SeasonId " +
                 "FROM Matches m " +
                 "INNER JOIN Gameweeks g ON m.GameweekId = g.GameweekId " +
                 "INNER JOIN Seasons s ON g.SeasonId = s.SeasonId " +
                 "WHERE m.MatchDate > @CurrentDate " +
-                "ORDER BY m.MatchDate", new { CurrentDate = DateTime.UtcNow });
+                "ORDER BY m.MatchDate";
+
+            var seasonId = await _dbConnection.QueryFirstOrDefaultAsync<string>(sql, new { CurrentDate = DateTime.UtcNow });
 
             var points = await _dbConnection.QueryFirstAsync<int>(
                 "SELECT " +

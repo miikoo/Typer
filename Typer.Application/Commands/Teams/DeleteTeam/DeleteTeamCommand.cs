@@ -8,6 +8,6 @@ namespace Typer.Application.Commands.Teams.DeleteTeam
 {
     public class DeleteTeamCommand : IRequest<Unit>
     {
-        public Guid TeamId { get; set; }
+        public string TeamId { get; set; }
     }
 }

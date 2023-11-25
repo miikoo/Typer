@@ -7,6 +7,6 @@ namespace Typer.Application.Queries.Gameweeks.GetGameweeksBySeasonId
 {
     public class GetGameweeksBySeasonIdQuery : IRequest<List<GameweekDto>>
     {
-        public Guid SeasonId { get; set; }
+        public string SeasonId { get; set; }
     }
 }

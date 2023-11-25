@@ -7,7 +7,11 @@ namespace Typer.Application.Commands.Users.Authenticate
 {
     public class UserDto
     {
-        public UserDto(string username, Roles role, Guid userId, string token)
+        public UserDto()
+        {
+            
+        }
+        public UserDto(string username, Roles role, string userId, string token)
         {
             Username = username;
             Role = role;
@@ -17,7 +21,7 @@ namespace Typer.Application.Commands.Users.Authenticate
 
         public string Username { get; set; }
         public Roles Role { get; set; }
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public string Token { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace Typer.Infrastructure.Entities
         {
         }
 
-        public Guid TeamId { get; set; }
+        public string TeamId { get; set; }
         public string TeamName { get; set; }
 
         public static DbTeam Create(Team team)

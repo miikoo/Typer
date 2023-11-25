@@ -6,7 +6,10 @@ namespace Typer.Application.Queries.Users.GetUserPoints
 {
     public class UserPointsDto
     {
-
+        public UserPointsDto()
+        {
+            
+        }
         public UserPointsDto(int points)
         {
             Points = points;

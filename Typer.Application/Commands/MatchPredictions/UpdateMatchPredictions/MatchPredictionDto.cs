@@ -6,7 +6,11 @@ namespace Typer.Application.Commands.MatchPredictions.UpdateMatchPredictions
 {
     public class MatchPredictionDto
     {
-        public Guid MatchPredictionId { get; set; }
+        public MatchPredictionDto()
+        {
+            
+        }
+        public string MatchPredictionId { get; set; }
         public int? HomeTeamGoalsPrediction { get; set; }
         public int? AwayTeamGoalsPrediction { get; set; }
     }

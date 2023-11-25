@@ -18,7 +18,7 @@ namespace Typer.Application.Services.JwtGenerator
             _config = config;
         }
 
-        public string Generate(Guid userId, Roles role)
+        public string Generate(string userId, Roles role)
         {
             var secret = _config.GetSection("AppSettings").GetSection("Secret").Value;
             var tokenHandler = new JwtSecurityTokenHandler();

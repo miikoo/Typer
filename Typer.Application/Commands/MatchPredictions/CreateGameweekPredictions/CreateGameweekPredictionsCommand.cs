@@ -7,7 +7,7 @@ namespace Typer.Application.Commands.MatchPredictions.CreateGameweekPredictions
 {
     public class CreateGameweekPredictionsCommand : IRequest<Unit>
     {
-        public Guid UserId { get; set; }
-        public Guid GameweekId { get; set; }
+        public string UserId { get; set; }
+        public string GameweekId { get; set; }
     }
 }

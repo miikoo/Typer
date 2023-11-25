@@ -31,7 +31,7 @@ namespace Typer.Infrastructure.QueryHandlers.Gameweeks
                 LIMIT 1
             ";
 
-            var seasonId = await _dbConnection.QueryFirstOrDefaultAsync<Guid>(currentSeasonQuery, new { CurrentDate = DateTime.UtcNow });
+            var seasonId = await _dbConnection.QueryFirstOrDefaultAsync<string>(currentSeasonQuery, new { CurrentDate = DateTime.UtcNow });
             
             const string gameweeksQuery = @"
                 SELECT g.GameweekId, g.GameweekNumber

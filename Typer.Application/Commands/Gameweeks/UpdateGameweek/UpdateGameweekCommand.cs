@@ -8,7 +8,7 @@ namespace Typer.Application.Commands.Gameweeks.UpdateGameweek
 {
     public class UpdateGameweekCommand : IRequest<Unit>
     {
-        public Guid GameweekId { get; set; }
+        public string GameweekId { get; set; }
         public int GameweekNumber { get; set; }
     }
 }

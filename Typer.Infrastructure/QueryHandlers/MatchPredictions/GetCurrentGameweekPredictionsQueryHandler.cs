@@ -28,9 +28,9 @@ namespace Typer.Infrastructure.QueryHandlers.MatchPredictions
                 JOIN Teams AS ht ON m.HomeTeamId = ht.TeamId
                 JOIN Teams AS at ON m.AwayTeamId = at.TeamId
                 LEFT JOIN MatchPredictions AS mp ON m.MatchId = mp.MatchId AND mp.UserId = @UserId
-                WHERE m.MatchDate > GETDATE() AND m.MatchDate < DATEADD(DAY, 7, GETDATE())";
+                WHERE m.MatchDate > @Date AND m.MatchDate < @Date2";
 
-            var parameters = new { UserId = request.UserId };
+            var parameters = new { UserId = request.UserId, Date = DateTime.UtcNow, Date2 = DateTime.UtcNow.AddDays(7) };
             var matches = await _connection.QueryAsync<MatchPredictionDto>(query, parameters);
 
             return matches.OrderBy(x => x.MatchDate).ToList();

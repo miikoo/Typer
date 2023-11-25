@@ -23,7 +23,7 @@ CREATE TABLE Gameweeks (
     GameweekNumber INT,
     ExternalId BIGINT,
     SeasonId VARCHAR(255),
-    FOREIGN KEY (SeasonId) REFERENCES Seasons(SeasonId)
+    FOREIGN KEY (SeasonId) REFERENCES Seasons(SeasonId) ON DELETE CASCADE
 );
 
 CREATE TABLE Matches (
@@ -34,9 +34,9 @@ CREATE TABLE Matches (
     HomeTeamId VARCHAR(255),
     AwayTeamId VARCHAR(255),
     GameweekId VARCHAR(255),
-    FOREIGN KEY (HomeTeamId) REFERENCES Teams(TeamId),
-    FOREIGN KEY (AwayTeamId) REFERENCES Teams(TeamId),
-    FOREIGN KEY (GameweekId) REFERENCES Gameweeks(GameweekId)
+    FOREIGN KEY (HomeTeamId) REFERENCES Teams(TeamId) ON DELETE CASCADE,
+    FOREIGN KEY (AwayTeamId) REFERENCES Teams(TeamId) ON DELETE CASCADE,
+    FOREIGN KEY (GameweekId) REFERENCES Gameweeks(GameweekId) ON DELETE CASCADE
 );
 
 CREATE TABLE MatchPredictions (
@@ -45,6 +45,6 @@ CREATE TABLE MatchPredictions (
     AwayTeamGoalPrediction INT,
     UserId VARCHAR(255),
     MatchId VARCHAR(255),
-    FOREIGN KEY (UserId) REFERENCES Users(UserId),
-    FOREIGN KEY (MatchId) REFERENCES Matches(MatchId)
+    FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE,
+    FOREIGN KEY (MatchId) REFERENCES Matches(MatchId) ON DELETE CASCADE
 );

@@ -7,7 +7,7 @@ namespace Typer.Domain.Models
 {
     public class User
     {
-        public User(Guid userId, string username, string email, Roles role, string password, string salt)
+        public User(string userId, string username, string email, Roles role, string password, string salt)
         {
             UserId = userId;
             Username = username;
@@ -17,7 +17,12 @@ namespace Typer.Domain.Models
             Salt = salt;
         }
 
-        public Guid UserId { get; set; }
+        public User()
+        {
+            
+        }
+
+        public string UserId { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         public Roles Role { get; set; }
@@ -25,6 +30,6 @@ namespace Typer.Domain.Models
         public string Salt { get; set; }
 
         public static User Create(string username, string email, Roles role, string password, string salt)
-            => new User(Guid.NewGuid(), username, email, role, password, salt);
+            => new User(Guid.NewGuid().ToString(), username, email, role, password, salt);
     }
 }

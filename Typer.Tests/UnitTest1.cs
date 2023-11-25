@@ -21,7 +21,7 @@ namespace Typer.Tests
         public async Task Test1()
         {
             var command = new CreateTeamCommand { TeamName = "asd" };
-            _context.Teams.Add(new Infrastructure.Entities.DbTeam { TeamId = new Guid(), TeamName = "dsa" });
+            _context.Teams.Add(new Infrastructure.Entities.DbTeam { TeamId = new Guid().ToString(), TeamName = "dsa" });
             _context.SaveChanges();
             var y = _context.Teams.Select(x => x).ToList();
             var response = await FlurlClient

@@ -6,8 +6,13 @@ namespace Typer.Domain.Models
 {
     public class Match
     {
-        public Match(Guid matchId, int? homeTeamGoals, int? awayTeamGoals, DateTime matchDate, Guid awayTeamId,
-            Guid homeTeamId, Guid gameweekId)
+        public Match()
+        {
+            
+        }
+
+        public Match(string matchId, int? homeTeamGoals, int? awayTeamGoals, DateTime matchDate, string awayTeamId,
+            string homeTeamId, string gameweekId)
         {
             MatchId = matchId;
             HomeTeamGoals = homeTeamGoals;
@@ -18,16 +23,16 @@ namespace Typer.Domain.Models
             AwayTeamId = awayTeamId;
         }
 
-        public Guid MatchId { get; set; }
+        public string MatchId { get; set; }
         public int? HomeTeamGoals { get; set; }
         public int? AwayTeamGoals { get; set; }
         public DateTime MatchDate { get; set; }
-        public Guid GameweekId { get; set; }
-        public Guid HomeTeamId { get; set; }
-        public Guid AwayTeamId { get; set; }
+        public string GameweekId { get; set; }
+        public string HomeTeamId { get; set; }
+        public string AwayTeamId { get; set; }
 
-        public static Match Create(int? homeTeamGoals, int? awayTeamGoals, DateTime matchDate, Guid awayTeamId,
-            Guid homeTeamId, Guid gameweekId)
-            => new Match(Guid.NewGuid(), homeTeamGoals, awayTeamGoals, matchDate, awayTeamId, homeTeamId, gameweekId);
+        public static Match Create(int? homeTeamGoals, int? awayTeamGoals, DateTime matchDate, string awayTeamId,
+            string homeTeamId, string gameweekId)
+            => new Match(Guid.NewGuid().ToString(), homeTeamGoals, awayTeamGoals, matchDate, awayTeamId, homeTeamId, gameweekId);
     }
 }

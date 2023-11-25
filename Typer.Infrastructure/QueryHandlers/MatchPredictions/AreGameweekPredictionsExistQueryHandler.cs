@@ -20,7 +20,7 @@ namespace Typer.Infrastructure.QueryHandlers.MatchPredictions
         public async Task<MatchPredictionDto> Handle(AreGameweekPredictionsExistQuery request, CancellationToken cancellationToken)
         {
             var query = @"
-                SELECT TOP 1 1
+                SELECT count(*)
                 FROM MatchPredictions AS mp
                 JOIN Matches AS m ON mp.MatchId = m.MatchId AND m.GameweekId = @GameweekId
                 WHERE mp.UserId = @UserId";

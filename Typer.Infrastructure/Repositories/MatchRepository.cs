@@ -29,19 +29,19 @@ namespace Typer.Infrastructure.Repositories
             await _dbConnection.ExecuteAsync(insertQuery, matches.Select(x => DbMatch.Create(x)));
         }
 
-        public async Task DeleteAsync(Guid matchId)
+        public async Task DeleteAsync(string matchId)
         {
             const string deleteQuery = "DELETE FROM Matches WHERE MatchId = @MatchId";
             await _dbConnection.ExecuteAsync(deleteQuery, new { MatchId = matchId });
         }
 
-        public async Task<Match> GetByIdAsync(Guid matchId)
+        public async Task<Match> GetByIdAsync(string matchId)
         {
             const string selectQuery = "SELECT * FROM Matches WHERE MatchId = @MatchId";
             return await _dbConnection.QueryFirstOrDefaultAsync<Match>(selectQuery, new { MatchId = matchId });
         }
 
-        public async Task<List<Match>> GetAsync(Guid gameweekId)
+        public async Task<List<Match>> GetAsync(string gameweekId)
         {
             const string selectQuery = "SELECT * FROM Matches WHERE GameweekId = @GameweekId";
             return (await _dbConnection.QueryAsync<Match>(selectQuery, new { GameweekId = gameweekId })).ToList();

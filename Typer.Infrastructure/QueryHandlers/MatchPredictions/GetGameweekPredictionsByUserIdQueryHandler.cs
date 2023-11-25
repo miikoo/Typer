@@ -22,7 +22,7 @@ namespace Typer.Infrastructure.QueryHandlers.MatchPredictions
         {
             string sql = @"
                 SELECT mp.MatchPredictionId, m.HomeTeamGoals, m.AwayTeamGoals, ht.TeamName AS HomeTeamName,
-                at.TeamName AS AwayTeamName, mp.HomeTeamGoalPrediction, mp.AwayTeamGoalPrediction, m.MatchDate
+                at.TeamName AS AwayTeamName, mp.HomeTeamGoalPrediction HomeTeamGoalsPrediction, mp.AwayTeamGoalPrediction AwayTeamGoalsPrediction, m.MatchDate
                 FROM Matches m
                 JOIN Teams ht ON m.HomeTeamId = ht.TeamId
                 JOIN Teams at ON m.AwayTeamId = at.TeamId

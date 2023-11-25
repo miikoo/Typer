@@ -11,7 +11,7 @@ namespace Typer.Infrastructure.Entities
         {
         }
 
-        public Guid SeasonId { get; set; }
+        public string SeasonId { get; set; }
         public int StartYear { get; set; }
         public int EndYear { get; set; }
 

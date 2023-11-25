@@ -6,11 +6,15 @@ namespace Typer.Application.Commands.Gameweeks.CreateGameweek
 {
     public class GameweekDto
     {
-        public GameweekDto(Guid id)
+        public GameweekDto()
+        {
+            
+        }
+        public GameweekDto(string id)
         {
             GameweekId = id;
         }
 
-        public Guid GameweekId { get; set; }
+        public string GameweekId { get; set; }
     }
 }

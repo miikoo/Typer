@@ -27,19 +27,19 @@ namespace Typer.Infrastructure.Repositories
             await _dbConnection.ExecuteAsync(insertQuery, gameweeks);
         }
 
-        public async Task DeleteAsync(Guid gameweekId)
+        public async Task DeleteAsync(string gameweekId)
         {
             const string deleteQuery = "DELETE FROM Gameweeks WHERE GameweekId = @GameweekId";
             await _dbConnection.ExecuteAsync(deleteQuery, new { GameweekId = gameweekId });
         }
 
-        public async Task<Gameweek> GetByIdAsync(Guid gameweekId)
+        public async Task<Gameweek> GetByIdAsync(string gameweekId)
         {
             const string selectQuery = "SELECT * FROM Gameweeks WHERE GameweekId = @GameweekId";
             return await _dbConnection.QueryFirstOrDefaultAsync<Gameweek>(selectQuery, new { GameweekId = gameweekId });
         }
 
-        public async Task<List<Gameweek>> GetAsync(Guid seasonId)
+        public async Task<List<Gameweek>> GetAsync(string seasonId)
         {
             const string selectQuery = "SELECT * FROM Gameweeks WHERE SeasonId = @SeasonId";
             return (await _dbConnection.QueryAsync<Gameweek>(selectQuery, new { SeasonId = seasonId })).ToList();

@@ -8,9 +8,9 @@ namespace Typer.Domain.Interfaces.Repositories
     public interface IMatchRepository
     {
         Task CreateAsync(params Match[] matches);
-        Task<List<Match>> GetAsync(Guid gameweekId);
-        Task<Match> GetByIdAsync(Guid matchId);
+        Task<List<Match>> GetAsync(string gameweekId);
+        Task<Match> GetByIdAsync(string matchId);
         Task UpdateAsync(params Match[] matches);
-        Task DeleteAsync(Guid matchId);
+        Task DeleteAsync(string matchId);
     }
 }

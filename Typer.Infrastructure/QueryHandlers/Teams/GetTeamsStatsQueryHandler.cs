@@ -24,7 +24,7 @@ namespace Typer.Infrastructure.QueryHandlers.Teams
         {
             var result = new List<TeamStats>();
 
-            string matchesQuery = "SELECT MatchId, HomeTeamId, AwayTeamId, HomeTeamGoals, AwayTeamGoals " +
+            string matchesQuery = "SELECT * " +
                                   "FROM Matches " +
                                   "WHERE MatchDate > @CurrentDate";
 
@@ -33,10 +33,10 @@ namespace Typer.Infrastructure.QueryHandlers.Teams
                                          "WHERE GameweekId = @GameweekId";
 
             string allTeamsQuery = "SELECT TeamId, TeamName FROM Teams";
-
-            // Execute queries and retrieve data
+            
             var matches = await _dbConnection.QueryAsync<DbMatch>(matchesQuery, new { CurrentDate = DateTime.UtcNow });
-            var gameweekMatches = await _dbConnection.QueryAsync<DbMatch>(gameweekMatchesQuery, new { GameweekId = 3 }); // You may need to change this value.
+            var gameweekId = matches.First().GameweekId;
+            var gameweekMatches = await _dbConnection.QueryAsync<DbMatch>(gameweekMatchesQuery, new { GameweekId = gameweekId });
             var allTeams = await _dbConnection.QueryAsync<DbTeam>(allTeamsQuery);
 
             var teams = allTeams.Where(team =>

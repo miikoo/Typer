@@ -11,14 +11,14 @@ namespace Typer.Infrastructure.Entities
         {
         }
 
-        public Guid MatchId { get; set; }
+        public string MatchId { get; set; }
         public int? HomeTeamGoals { get; set; }
         public int? AwayTeamGoals { get; set; }
         public DateTime MatchDate { get; set; }
 
-        public Guid HomeTeamId { get; set; }
-        public Guid AwayTeamId { get; set; }
-        public Guid GameweekId { get; set; }
+        public string HomeTeamId { get; set; }
+        public string AwayTeamId { get; set; }
+        public string GameweekId { get; set; }
         
 
         public static DbMatch Create(Match match)

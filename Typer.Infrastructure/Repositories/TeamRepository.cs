@@ -25,7 +25,7 @@ namespace Typer.Infrastructure.Repositories
             await _dbConnection.ExecuteAsync(insertQuery, teams.Select(DbTeam.Create));
         }
 
-        public async Task DeleteAsync(Guid teamId)
+        public async Task DeleteAsync(string teamId)
         {
             const string deleteQuery = "DELETE FROM Teams WHERE TeamId = @TeamId";
             await _dbConnection.ExecuteAsync(deleteQuery, new { TeamId = teamId });
@@ -37,7 +37,7 @@ namespace Typer.Infrastructure.Repositories
             return (await _dbConnection.QueryAsync<Team>(selectQuery)).AsList();
         }
 
-        public async Task<Team> GetAsync(Guid teamId)
+        public async Task<Team> GetAsync(string teamId)
         {
             const string selectQuery = "SELECT TeamId, TeamName FROM Teams WHERE TeamId = @TeamId";
             return await _dbConnection.QueryFirstOrDefaultAsync<Team>(selectQuery, new { TeamId = teamId });
