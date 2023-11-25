@@ -37,7 +37,7 @@ namespace Typer.API.Controllers
 
         [Authorize]
         [HttpGet("areGameweekPredictionsExist/{id}/{userId}")]
-        public async Task<IActionResult> AreGameweekPredictionsExist([FromRoute]Guid id, [FromRoute] Guid userId)
+        public async Task<IActionResult> AreGameweekPredictionsExist([FromRoute]string id, [FromRoute] string userId)
         {
             var areExist = await _mediator.Send(new AreGameweekPredictionsExistQuery
             {
@@ -49,7 +49,7 @@ namespace Typer.API.Controllers
 
         [Authorize]
         [HttpGet("getGameweekPredictionsByUserId/{id}/{userid}")]
-        public async Task<IActionResult> GetGameweekPredictionsByUserId([FromRoute]Guid id, [FromRoute]Guid userId)
+        public async Task<IActionResult> GetGameweekPredictionsByUserId([FromRoute]string id, [FromRoute]string userId)
             => Ok(await _mediator.Send(new GetGameweekPredictionsByUserIdQuery 
             {
                 GameweekId = id,
@@ -68,7 +68,7 @@ namespace Typer.API.Controllers
 
         [Authorize]
         [HttpGet("getCurrentGameweekPredictionsByUserId/{userid}")]
-        public async Task<IActionResult> GetCurrentGameweekPredictionsByUserId([FromRoute]Guid userId)
+        public async Task<IActionResult> GetCurrentGameweekPredictionsByUserId([FromRoute]string userId)
             => Ok(await _mediator.Send(new GetCurrentGameweekPredictionsQuery
             {
                 UserId = userId
@@ -76,7 +76,7 @@ namespace Typer.API.Controllers
 
         [Authorize]
         [HttpGet("getNextPredictions/{userId}/{numOfPred}")]
-        public async Task<IActionResult> GetNextPredictions([FromRoute]Guid userId, [FromRoute]int numOfPred)
+        public async Task<IActionResult> GetNextPredictions([FromRoute]string userId, [FromRoute]int numOfPred)
             => Ok(await _mediator.Send(new GetNextPredictionsQuery { NumOfPredictions = numOfPred, UserId = userId}));
     }
 }

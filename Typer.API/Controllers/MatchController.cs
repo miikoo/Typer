@@ -32,7 +32,7 @@ namespace Typer.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMatch([FromRoute]Guid id)
+        public async Task<IActionResult> DeleteMatch([FromRoute]string id)
             => Ok(await _mediator.Send(new DeleteMatchCommand
             {
                 MatchId = id
@@ -49,7 +49,7 @@ namespace Typer.API.Controllers
             => Ok(await _mediator.Send(command));
 
         [HttpGet("getMatchesByGameweekId/{id}")]
-        public async Task<IActionResult> GetMatchesByGameweekId([FromRoute]Guid id)
+        public async Task<IActionResult> GetMatchesByGameweekId([FromRoute]string id)
             => Ok(await _mediator.Send(new GetMatchesByGameweekIdQuery
             {
                 GameweekId = id

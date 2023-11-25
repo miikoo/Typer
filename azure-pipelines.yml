@@ -3,14 +3,14 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- develop
+- none
 
 resources:
 - repo: self
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '65e3dfd4-8bf0-4ea2-bb41-8de7d25f7f0a'
+  dockerRegistryServiceConnection: 'Typer Container'
   imageRepository: 'typer'
   containerRegistry: 'typer.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile2'

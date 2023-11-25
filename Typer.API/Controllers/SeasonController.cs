@@ -47,7 +47,7 @@ namespace Typer.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSeason([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteSeason([FromRoute] string id)
             => Ok(await _mediator.Send(new DeleteSeasonCommand
             {
                 SeasonId = id

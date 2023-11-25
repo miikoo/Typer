@@ -35,7 +35,7 @@ namespace Typer.API.Controllers
 
         [Authorize]
         [HttpGet("getUserPoints/{id}")]
-        public async Task<IActionResult> GetUserPoints([FromRoute]Guid id)
+        public async Task<IActionResult> GetUserPoints([FromRoute]string id)
             => Ok(await _mediator.Send(new GetUserPointsQuery
             {
                 UserId = id
