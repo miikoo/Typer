@@ -26,7 +26,7 @@ namespace Typer.Infrastructure.QueryHandlers.Teams
 
             string matchesQuery = "SELECT * " +
                                   "FROM Matches " +
-                                  "WHERE MatchDate > @CurrentDate";
+                                  "WHERE MatchDate < @CurrentDate";
 
             string gameweekMatchesQuery = "SELECT MatchId, HomeTeamId, AwayTeamId, HomeTeamGoals, AwayTeamGoals " +
                                          "FROM Matches " +
